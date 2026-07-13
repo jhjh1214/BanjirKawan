@@ -296,8 +296,9 @@ export default function OnboardWizard() {
             {extraction?.enrichment?.nearestStation
               ? ` and linked to ${extraction.enrichment.nearestStation.stationName} (~${extraction.enrichment.nearestStation.distanceKm} km)`
               : ""}
-            . Next: tiered flood playbooks are generated from this inventory (Day 4) and delivered by Telegram the
-            moment your river station crosses a threshold.
+            . Your tiered flood playbooks (watch / warning / danger, BM + EN) are being generated from this
+            inventory right now &mdash; they&apos;ll be delivered by Telegram the moment your river station crosses
+            a threshold.
           </p>
           <a href="/" className="mt-6 inline-block text-sky-400 underline underline-offset-2">
             ← back to status

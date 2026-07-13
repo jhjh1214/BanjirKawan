@@ -7,6 +7,7 @@ import {
   getLatestSiteGraph,
 } from "@/lib/db/repositories/site-graphs.repo";
 import { siteGraphSchema } from "@/modules/site-intelligence";
+import { generateShopPlaybooks } from "@/modules/playbook";
 
 export const dynamic = "force-dynamic";
 
@@ -36,5 +37,29 @@ export async function POST(req: NextRequest) {
   await confirmSiteGraph(next.id);
 
   logger.info("site graph confirmed", { shopId, version: next.version, assets: graph.assets.length });
-  return NextResponse.json({ ok: true, siteGraphId: next.id, version: next.version });
+
+  // Dry-day thinking starts now: kick off playbook generation without holding
+  // the response. Self-hosted Node keeps running after the reply; each result
+  // is cached independently and logged.
+  void generateShopPlaybooks(shopId)
+    .then((r) =>
+      logger.info("post-confirm playbook generation finished", {
+        shopId,
+        generated: r.generated.length,
+        failed: r.failed.length,
+      })
+    )
+    .catch((err) =>
+      logger.error("post-confirm playbook generation crashed", {
+        shopId,
+        error: err instanceof Error ? err.message : String(err),
+      })
+    );
+
+  return NextResponse.json({
+    ok: true,
+    siteGraphId: next.id,
+    version: next.version,
+    playbooksGenerating: true,
+  });
 }

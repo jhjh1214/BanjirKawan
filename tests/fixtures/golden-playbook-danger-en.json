@@ -1,0 +1,63 @@
+{
+  "tier": "danger",
+  "language": "en",
+  "estTotalMinutes": 40,
+  "actions": [
+    {
+      "text": "Move high-value liquor from the bottom shelves of the wall display (a9) and cabinet (a4) to the highest available shelves or upper storage area.",
+      "order": 1,
+      "savesRM": {
+        "low": 15000,
+        "high": 45000
+      },
+      "estMinutes": 15,
+      "targetAssetIds": [
+        "a4",
+        "a9"
+      ],
+      "deadlineOffsetMin": 15
+    },
+    {
+      "text": "Relocate the glass display showcase (a6) to the highest point in the shop or onto a secure elevated platform.",
+      "order": 2,
+      "savesRM": {
+        "low": 2000,
+        "high": 6000
+      },
+      "estMinutes": 10,
+      "targetAssetIds": [
+        "a6"
+      ],
+      "deadlineOffsetMin": 25
+    },
+    {
+      "text": "Move the Coca-Cola rack (a1) and bottled water (a5) to the highest available shelving or top of the service counter.",
+      "order": 3,
+      "savesRM": {
+        "low": 400,
+        "high": 1100
+      },
+      "estMinutes": 10,
+      "targetAssetIds": [
+        "a1",
+        "a5"
+      ],
+      "deadlineOffsetMin": 35
+    },
+    {
+      "text": "Unplug all chest freezers (a7, a8) and the service counter equipment, then switch off the main power supply at the distribution board.",
+      "order": 4,
+      "savesRM": {
+        "low": 21000,
+        "high": 43000
+      },
+      "estMinutes": 5,
+      "targetAssetIds": [
+        "a3",
+        "a7",
+        "a8"
+      ],
+      "deadlineOffsetMin": 40
+    }
+  ]
+}

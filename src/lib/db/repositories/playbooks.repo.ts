@@ -37,6 +37,17 @@ export async function createPlaybook(input: {
   return rows[0];
 }
 
+export async function listPlaybooksForShop(shopId: string): Promise<PlaybookRow[]> {
+  const { rows } = await getPool().query<PlaybookRow>(
+    `select distinct on (tier, language) *
+     from playbooks
+     where shop_id = $1 and validated = true
+     order by tier, language, created_at desc`,
+    [shopId]
+  );
+  return rows;
+}
+
 /** The storm-time lookup: latest validated cached playbook for a shop + tier. */
 export async function getLatestValidatedPlaybook(
   shopId: string,

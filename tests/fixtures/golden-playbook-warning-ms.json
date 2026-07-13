@@ -1,0 +1,74 @@
+{
+  "tier": "warning",
+  "language": "ms",
+  "estTotalMinutes": 60,
+  "actions": [
+    {
+      "text": "Alihkan stok arak bernilai tinggi dari rak bawah ke rak paling atas dalam kabinet (a4) dan rak dinding (a9).",
+      "order": 1,
+      "savesRM": {
+        "low": 15000,
+        "high": 45000
+      },
+      "estMinutes": 20,
+      "targetAssetIds": [
+        "a4",
+        "a9"
+      ],
+      "deadlineOffsetMin": 20
+    },
+    {
+      "text": "Alihkan rak makanan ringan (a2) ke kawasan yang lebih tinggi atau atas meja.",
+      "order": 2,
+      "savesRM": {
+        "low": 500,
+        "high": 1500
+      },
+      "estMinutes": 15,
+      "targetAssetIds": [
+        "a2"
+      ],
+      "deadlineOffsetMin": 35
+    },
+    {
+      "text": "Alihkan rak minuman Coca-Cola (a1) ke kawasan yang lebih tinggi.",
+      "order": 3,
+      "savesRM": {
+        "low": 300,
+        "high": 800
+      },
+      "estMinutes": 10,
+      "targetAssetIds": [
+        "a1"
+      ],
+      "deadlineOffsetMin": 45
+    },
+    {
+      "text": "Alihkan botol air minuman (a5) ke atas rak atau meja yang tinggi.",
+      "order": 4,
+      "savesRM": {
+        "low": 100,
+        "high": 300
+      },
+      "estMinutes": 5,
+      "targetAssetIds": [
+        "a5"
+      ],
+      "deadlineOffsetMin": 50
+    },
+    {
+      "text": "Tutup suis utama (DB box) dan cabut semua palam peti sejuk (a7, a8) untuk mengelakkan litar pintas.",
+      "order": 5,
+      "savesRM": {
+        "low": 20000,
+        "high": 40000
+      },
+      "estMinutes": 10,
+      "targetAssetIds": [
+        "a7",
+        "a8"
+      ],
+      "deadlineOffsetMin": 60
+    }
+  ]
+}

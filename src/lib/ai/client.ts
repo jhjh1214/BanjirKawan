@@ -19,10 +19,39 @@ export interface AiJsonRequest {
   label?: string;
 }
 
-const MAX_ATTEMPTS = 3; // 1 try + retry x2
+const MAX_ATTEMPTS_PER_MODEL = 2;
 const REQUEST_TIMEOUT_MS = 120_000;
+// Free tier allows 5 requests/min on flash — pace proactively instead of
+// slamming into 429s. 13s spacing ≈ 4.6 RPM.
+const MIN_CALL_INTERVAL_MS = 13_000;
 
 let client: GoogleGenAI | null = null;
+let rateGate: Promise<void> = Promise.resolve();
+let lastCallAt = 0;
+
+/** Serialises calls and enforces the free-tier pacing between them. */
+function acquireSlot(): Promise<void> {
+  const prev = rateGate;
+  let release!: () => void;
+  rateGate = new Promise((r) => {
+    release = r;
+  });
+  return prev.then(async () => {
+    const wait = lastCallAt + MIN_CALL_INTERVAL_MS - Date.now();
+    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+    lastCallAt = Date.now();
+    release();
+  });
+}
+
+/** Backoff for a failed attempt: honour Google's RetryInfo when present. */
+function backoffMs(err: unknown, attempt: number): number {
+  const msg = err instanceof Error ? err.message : String(err);
+  const m = msg.match(/"retryDelay":"(\d+)(?:\.\d+)?s"/) ?? msg.match(/retry in (\d+)(?:\.\d+)?s/i);
+  if (m) return (Number.parseInt(m[1], 10) + 3) * 1000;
+  if (msg.includes('"code":503') || msg.includes("UNAVAILABLE")) return 30_000 * attempt;
+  return attempt * 5_000;
+}
 
 function getClient(): GoogleGenAI {
   const { GEMINI_API_KEY } = getConfig();
@@ -39,7 +68,8 @@ function getClient(): GoogleGenAI {
 }
 
 export async function generateJson(req: AiJsonRequest): Promise<unknown> {
-  const { GEMINI_MODEL } = getConfig();
+  const { GEMINI_MODEL, GEMINI_FALLBACK_MODELS } = getConfig();
+  const models = [GEMINI_MODEL, ...GEMINI_FALLBACK_MODELS.filter((m) => m !== GEMINI_MODEL)];
   const parts: Array<Record<string, unknown>> = [
     ...(req.images ?? []).map((img) => ({
       inlineData: { mimeType: img.mimeType, data: img.data },
@@ -48,50 +78,62 @@ export async function generateJson(req: AiJsonRequest): Promise<unknown> {
   ];
 
   let lastError: unknown = null;
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    const started = Date.now();
-    try {
-      const response = await getClient().models.generateContent({
-        model: GEMINI_MODEL,
-        contents: [{ role: "user", parts }],
-        config: {
-          responseMimeType: "application/json",
-          temperature: 0.2,
-          maxOutputTokens: req.maxOutputTokens ?? 16_384,
-        },
-      });
+  for (const model of models) {
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS_PER_MODEL; attempt++) {
+      await acquireSlot();
+      const started = Date.now();
+      try {
+        const response = await getClient().models.generateContent({
+          model,
+          contents: [{ role: "user", parts }],
+          config: {
+            responseMimeType: "application/json",
+            temperature: 0.2,
+            maxOutputTokens: req.maxOutputTokens ?? 16_384,
+          },
+        });
 
-      const usage = response.usageMetadata;
-      logger.info("ai call ok", {
-        label: req.label ?? "unlabelled",
-        model: GEMINI_MODEL,
-        attempt,
-        ms: Date.now() - started,
-        promptTokens: usage?.promptTokenCount,
-        outputTokens: usage?.candidatesTokenCount,
-        thoughtTokens: usage?.thoughtsTokenCount,
-        totalTokens: usage?.totalTokenCount,
-      });
+        const usage = response.usageMetadata;
+        logger.info("ai call ok", {
+          label: req.label ?? "unlabelled",
+          model,
+          fallback: model !== GEMINI_MODEL,
+          attempt,
+          ms: Date.now() - started,
+          promptTokens: usage?.promptTokenCount,
+          outputTokens: usage?.candidatesTokenCount,
+          thoughtTokens: usage?.thoughtsTokenCount,
+          totalTokens: usage?.totalTokenCount,
+        });
 
-      const text = response.text;
-      if (!text) throw new Error("empty response from model");
-      return parseJsonLoose(text);
-    } catch (err) {
-      lastError = err;
-      logger.warn("ai call failed", {
-        label: req.label ?? "unlabelled",
-        attempt,
-        ms: Date.now() - started,
-        error: err instanceof Error ? err.message : String(err),
-      });
-      if (attempt < MAX_ATTEMPTS) {
-        await new Promise((r) => setTimeout(r, attempt * 2000));
+        const text = response.text;
+        if (!text) throw new Error("empty response from model");
+        return parseJsonLoose(text);
+      } catch (err) {
+        lastError = err;
+        const message = err instanceof Error ? err.message : String(err);
+        logger.warn("ai call failed", {
+          label: req.label ?? "unlabelled",
+          model,
+          attempt,
+          ms: Date.now() - started,
+          error: message,
+        });
+        // Capacity problems (429/503) won't heal within this model quickly —
+        // move to the next model after the per-model attempts; other errors
+        // (parse, timeout) also benefit from a model switch.
+        if (attempt < MAX_ATTEMPTS_PER_MODEL) {
+          const wait = backoffMs(err, attempt);
+          logger.info("ai retry scheduled", { label: req.label ?? "unlabelled", model, waitMs: wait });
+          await new Promise((r) => setTimeout(r, wait));
+        }
       }
     }
+    logger.warn("ai model exhausted, falling back", { label: req.label ?? "unlabelled", model });
   }
   throw lastError instanceof Error
     ? lastError
-    : new Error(`AI call failed after ${MAX_ATTEMPTS} attempts`);
+    : new Error(`AI call failed across all models (${models.join(", ")})`);
 }
 
 /** Tolerates markdown fences the model occasionally wraps JSON in. */

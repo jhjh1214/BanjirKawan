@@ -9,6 +9,17 @@ const envSchema = z.object({
   TELEGRAM_WEBHOOK_SECRET: z.string().default(""),
   GEMINI_API_KEY: z.string().default(""),
   GEMINI_MODEL: z.string().default("gemini-3.5-flash"),
+  // Per-model quotas are independent on the free tier — when the primary is
+  // overloaded (503) or exhausted (429), fall through to these in order.
+  GEMINI_FALLBACK_MODELS: z
+    .string()
+    .default("gemini-3.1-flash-lite,gemini-flash-lite-latest")
+    .transform((s) =>
+      s
+        .split(",")
+        .map((m) => m.trim())
+        .filter(Boolean)
+    ),
   INFOBANJIR_STATE_CODES: z
     .string()
     .default("SEL,WLH")
