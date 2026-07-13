@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useApp } from "@/components/providers/app-providers";
 import { Alert, Button, Card, Field, Input } from "@/components/ui";
+import { WavesIcon } from "@/components/ui/icons";
 import { fmt } from "@/lib/i18n";
 
 const TIERS = ["watch", "warning", "danger"] as const;
@@ -87,6 +88,7 @@ export default function DemoConsole() {
         </div>
 
         <Button size="lg" loading={busy} disabled={!stationId.trim()} onClick={simulate}>
+          {!busy && <WavesIcon size={20} />}
           {busy ? t.demo.simulating : t.demo.simulate}
         </Button>
 

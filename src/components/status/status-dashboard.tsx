@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/components/providers/app-providers";
 import { Alert, Badge, Card, EmptyState, THRESHOLD_TONE } from "@/components/ui";
+import { ActivityIcon } from "@/components/ui/icons";
 import { fmt } from "@/lib/i18n";
 
 export interface StatusData {
@@ -98,7 +99,7 @@ export function StatusDashboard({ data }: { data: StatusData }) {
             </p>
 
             {data.readings.length === 0 ? (
-              <EmptyState icon="🛰️" title={t.home.emptyTitle} body={t.home.emptyBody} />
+              <EmptyState icon={<ActivityIcon size={36} />} title={t.home.emptyTitle} body={t.home.emptyBody} />
             ) : (
               <div className="mt-4 overflow-x-auto">
                 <table className="w-full text-left text-sm">

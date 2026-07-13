@@ -49,8 +49,11 @@ export async function POST(req: NextRequest) {
     gpsLng >= 99 &&
     gpsLng <= 120;
 
-  if (!name || !address) {
-    return NextResponse.json({ error: "name and address are required" }, { status: 400 });
+  if (!name || (!address && !hasGps)) {
+    return NextResponse.json(
+      { error: "name is required, plus either an address or GPS coordinates" },
+      { status: 400 }
+    );
   }
   if (photos.length === 0 || photos.length > MAX_PHOTOS) {
     return NextResponse.json({ error: `provide 1-${MAX_PHOTOS} photos` }, { status: 400 });
@@ -62,7 +65,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const shop = await createShop({ name, address });
+    const shop = await createShop({
+      name,
+      // GPS-only onboarding: placeholder now, backfilled with the
+      // reverse-geocoded address during enrichment below.
+      address: address || `GPS ${gpsLat.toFixed(5)}, ${gpsLng.toFixed(5)}`,
+    });
 
     const uploadsDir = path.join(getConfig().UPLOADS_DIR, shop.id);
     await mkdir(uploadsDir, { recursive: true });
@@ -83,7 +91,7 @@ export async function POST(req: NextRequest) {
     }
 
     const started = Date.now();
-    const result = await extractSiteGraphFromPhotos(photoInputs, address);
+    const result = await extractSiteGraphFromPhotos(photoInputs, address || shop.address);
     logger.info("onboarding extraction complete", {
       shopId: shop.id,
       ms: Date.now() - started,
@@ -123,6 +131,8 @@ export async function POST(req: NextRequest) {
         lng: geocode.lng,
         stateCode: geocode.stateCode,
         nearestStationId: nearestStation?.stationId ?? null,
+        // GPS-only flow: replace the placeholder with the real street address.
+        address: !address ? geocode.displayName : undefined,
       });
       logger.info("shop enriched", {
         shopId: shop.id,

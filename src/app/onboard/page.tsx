@@ -5,6 +5,22 @@ import { useEffect, useRef, useState } from "react";
 import type { SiteGraph } from "@/modules/site-intelligence";
 import { useApp } from "@/components/providers/app-providers";
 import { Alert, Badge, Button, Card, Field, Input, Spinner } from "@/components/ui";
+import {
+  ArmchairIcon,
+  CameraIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  FileTextIcon,
+  LockIcon,
+  MapPinIcon,
+  PackageIcon,
+  SendIcon,
+  SnowflakeIcon,
+  TruckIcon,
+  UndoIcon,
+  XIcon,
+  ZapIcon,
+} from "@/components/ui/icons";
 import { fmt } from "@/lib/i18n";
 
 type Step = "details" | "surveying" | "confirm" | "done";
@@ -35,12 +51,12 @@ interface GpsFix {
   accuracyM: number;
 }
 
-const CATEGORY_ICON: Record<string, string> = {
-  equipment: "🧊",
-  stock: "📦",
-  electrical: "⚡",
-  furniture: "🪑",
-  document: "📄",
+const CATEGORY_ICON: Record<string, React.ReactNode> = {
+  equipment: <SnowflakeIcon size={13} />,
+  stock: <PackageIcon size={13} />,
+  electrical: <ZapIcon size={13} />,
+  furniture: <ArmchairIcon size={13} />,
+  document: <FileTextIcon size={13} />,
 };
 
 export default function OnboardWizard() {
@@ -98,6 +114,7 @@ export default function OnboardWizard() {
 
   async function submitDetails(e: React.FormEvent) {
     e.preventDefault();
+    if (!gps && !address.trim()) return; // browser `required` covers this; belt-and-braces
     if (files.length === 0) return setError(t.onboard.noPhotos);
     setError(null);
     setStep("surveying");
@@ -186,21 +203,14 @@ export default function OnboardWizard() {
                 placeholder={t.onboard.shopNamePlaceholder}
               />
             </Field>
-            <Field label={t.onboard.address}>
-              <Input
-                required
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder={t.onboard.addressPlaceholder}
-              />
-            </Field>
-
             <div className="space-y-2">
               <Button type="button" variant="ghost" size="sm" loading={locating} onClick={captureLocation}>
+                {!locating && <MapPinIcon size={14} />}
                 {locating ? t.onboard.locating : t.onboard.useLocation}
               </Button>
               {gps && (
-                <p className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+                <p className="flex flex-wrap items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+                  <CheckIcon size={13} />
                   {fmt(t.onboard.locationCaptured, { m: gps.accuracyM })}
                   <button
                     type="button"
@@ -213,6 +223,15 @@ export default function OnboardWizard() {
               )}
               {gpsError && <p className="text-xs text-orange-600 dark:text-orange-400">{t.onboard.locationError}</p>}
             </div>
+
+            <Field label={t.onboard.address} hint={gps ? t.onboard.addressOptionalWithGps : undefined}>
+              <Input
+                required={!gps}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder={t.onboard.addressPlaceholder}
+              />
+            </Field>
             <Field label={t.onboard.photos} hint={t.onboard.photosHint}>
               <input
                 type="file"
@@ -234,6 +253,7 @@ export default function OnboardWizard() {
               </Alert>
             )}
             <Button type="submit" size="lg">
+              <CameraIcon size={20} />
               {t.onboard.submit}
             </Button>
           </form>
@@ -299,12 +319,14 @@ export default function OnboardWizard() {
                         variant={isRemoved ? "ghost" : "danger"}
                         onClick={() => toggleRemoved(a.id)}
                       >
+                        {isRemoved ? <UndoIcon size={13} /> : <XIcon size={13} />}
                         {isRemoved ? t.onboard.undo : t.onboard.remove}
                       </Button>
                     </div>
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-500 dark:text-slate-400">
-                      <span>
-                        {CATEGORY_ICON[a.category] ?? "•"} {a.category}
+                      <span className="inline-flex items-center gap-1">
+                        {CATEGORY_ICON[a.category]}
+                        {a.category}
                       </span>
                       <span className="inline-flex items-center gap-1">
                         {t.onboard.height}
@@ -339,7 +361,10 @@ export default function OnboardWizard() {
                           className="mt-0 w-20 px-1 py-0.5 text-right text-xs"
                         />
                       </span>
-                      <span>{a.movable ? t.onboard.movable : t.onboard.fixed}</span>
+                      <span className="inline-flex items-center gap-1">
+                        {a.movable ? <TruckIcon size={13} /> : <LockIcon size={13} />}
+                        {a.movable ? t.onboard.movable : t.onboard.fixed}
+                      </span>
                       <Badge tone={unsure ? "yellow" : "slate"}>
                         {fmt(t.onboard.confidence, { pct: Math.round(a.confidence * 100) })} · {a.photoRef}
                       </Badge>
@@ -367,6 +392,7 @@ export default function OnboardWizard() {
             </Alert>
           )}
           <Button size="lg" variant="success" loading={busy} onClick={confirm}>
+            {!busy && <CheckIcon size={20} />}
             {busy
               ? t.onboard.saving
               : fmt(t.onboard.confirmCount, { count: extraction.graph.assets.length - removed.size })}
@@ -448,9 +474,9 @@ function DoneState({ extraction }: { extraction: ExtractionResponse }) {
 
   return (
     <Card className="mt-12 p-8 text-center">
-      <p className="text-4xl" aria-hidden>
-        ✅
-      </p>
+      <div className="flex justify-center text-emerald-500" aria-hidden>
+        <CheckCircleIcon size={44} />
+      </div>
       <h2 className="mt-4 text-2xl font-bold">{t.onboard.doneTitle}</h2>
       <p className="mt-2 text-slate-600 dark:text-slate-300">
         {station
@@ -479,6 +505,7 @@ function DoneState({ extraction }: { extraction: ExtractionResponse }) {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-6 py-3 font-bold text-white transition hover:bg-sky-500"
         >
+          <SendIcon size={18} />
           {t.onboard.connectTelegram}
         </a>
         <p className="text-xs text-slate-500">{t.onboard.connectTelegramHint}</p>

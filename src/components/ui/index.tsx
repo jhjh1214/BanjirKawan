@@ -4,6 +4,7 @@
 // these; theme variants (light/dark) live here and nowhere else.
 
 import { forwardRef } from "react";
+import { AlertTriangleIcon, CheckCircleIcon, InfoIcon, XCircleIcon } from "./icons";
 
 function cx(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
@@ -154,22 +155,22 @@ export const THRESHOLD_TONE: Record<string, BadgeTone> = {
 
 type AlertVariant = "error" | "warning" | "info" | "success";
 
-const ALERT_VARIANTS: Record<AlertVariant, { box: string; icon: string }> = {
+const ALERT_VARIANTS: Record<AlertVariant, { box: string; icon: React.ReactNode }> = {
   error: {
     box: "border-red-300 bg-red-50 text-red-900 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200",
-    icon: "⛔",
+    icon: <XCircleIcon size={18} />,
   },
   warning: {
     box: "border-orange-300 bg-orange-50 text-orange-900 dark:border-orange-900/60 dark:bg-orange-950/40 dark:text-orange-200",
-    icon: "⚠️",
+    icon: <AlertTriangleIcon size={18} />,
   },
   info: {
     box: "border-sky-300 bg-sky-50 text-sky-900 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-200",
-    icon: "ℹ️",
+    icon: <InfoIcon size={18} />,
   },
   success: {
     box: "border-emerald-300 bg-emerald-50 text-emerald-900 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200",
-    icon: "✅",
+    icon: <CheckCircleIcon size={18} />,
   },
 };
 
@@ -188,7 +189,9 @@ export function Alert({
   return (
     <div role={variant === "error" ? "alert" : "status"} className={cx("rounded-xl border p-4 text-sm", v.box)}>
       <div className="flex gap-3">
-        <span aria-hidden>{v.icon}</span>
+        <span aria-hidden className="mt-0.5 shrink-0">
+          {v.icon}
+        </span>
         <div className="min-w-0 flex-1">
           {title && <p className="font-semibold">{title}</p>}
           {children && <div className={cx(title && "mt-1", "leading-relaxed opacity-90")}>{children}</div>}
@@ -242,14 +245,14 @@ export function EmptyState({
   body,
   action,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   body: string;
   action?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center gap-2 py-10 text-center">
-      <span className="text-4xl" aria-hidden>
+      <span className="text-slate-400 dark:text-slate-600" aria-hidden>
         {icon}
       </span>
       <p className="font-semibold text-slate-700 dark:text-slate-200">{title}</p>
