@@ -10,6 +10,7 @@
     "worker:build": "tsup",
     "worker:start": "node dist/worker/main.js",
     "migrate": "tsx scripts/migrate.ts",
+    "seed:demo": "tsx scripts/seed-demo.ts",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest"

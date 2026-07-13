@@ -1,6 +1,7 @@
 import { getLatestReadings } from "@/lib/db/repositories/events.repo";
 import { getSystemStatus } from "@/lib/db/repositories/system.repo";
 import { checkFreshness } from "@/modules/trigger";
+import { getOverviewMetrics } from "@/modules/metrics";
 import { StatusDashboard, type StatusData } from "@/components/status/status-dashboard";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,7 @@ export default async function Home() {
     statesPolled: [],
     readings: [],
     dbError: null,
+    metrics: null,
   };
 
   try {
@@ -26,6 +28,7 @@ export default async function Home() {
       data.feedFreshness = hb.freshness ?? null;
       data.statesPolled = hb.statesPolled ?? [];
     }
+    data.metrics = (await getOverviewMetrics()).overview;
     data.readings = (await getLatestReadings(15)).map((r) => ({
       stationId: r.station_id,
       stationName: r.station_name,

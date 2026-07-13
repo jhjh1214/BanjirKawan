@@ -5,6 +5,7 @@ import { getShop, setTelegramChatId } from "@/lib/db/repositories/shops.repo";
 import {
   appendCompletedAction,
   getDispatchCheckoffContext,
+  recordCheckoff,
 } from "@/lib/db/repositories/dispatches.repo";
 import {
   BOT_COPY,
@@ -103,6 +104,7 @@ async function handleCheckoff(update: TelegramUpdate) {
     return;
   }
 
+  await recordCheckoff(dispatchId, order); // timestamped telemetry (first tap wins)
   const completed = await appendCompletedAction(dispatchId, order);
   const language = resolveMessageLanguage(ctx.language);
   const allDone = ctx.action_orders.every((o) => completed.includes(o));

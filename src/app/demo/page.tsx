@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApp } from "@/components/providers/app-providers";
-import { Alert, Button, Card, Field, Input } from "@/components/ui";
-import { WavesIcon } from "@/components/ui/icons";
+import { Alert, Badge, Button, Card, Field, Input } from "@/components/ui";
+import { CheckIcon, ClockIcon, SendIcon, ShieldIcon, WavesIcon } from "@/components/ui/icons";
+// ./compute (not the module index): the index pulls DB code, never client-safe.
+import { formatDurationMs, formatRmRange, type EventMetrics } from "@/modules/metrics/compute";
 import { fmt } from "@/lib/i18n";
+
+const METRICS_POLL_MS = 5_000;
+const METRICS_POLL_WINDOW_MS = 3 * 60_000;
 
 const TIERS = ["watch", "warning", "danger"] as const;
 type Tier = (typeof TIERS)[number];
@@ -22,10 +27,12 @@ export default function DemoConsole() {
   const [tier, setTier] = useState<Tier>("warning");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [eventId, setEventId] = useState<string | null>(null);
 
   async function simulate() {
     setBusy(true);
     setResult(null);
+    setEventId(null);
     try {
       const res = await fetch("/api/trigger", {
         method: "POST",
@@ -48,6 +55,7 @@ export default function DemoConsole() {
               noPlaybook: d.skippedNoPlaybook,
             });
       setResult({ ok: true, message: `${base} ${detail}` });
+      setEventId(body.floodEventId ?? null);
     } catch (err) {
       setResult({ ok: false, message: err instanceof Error ? err.message : String(err) });
     } finally {
@@ -94,7 +102,10 @@ export default function DemoConsole() {
 
         {result &&
           (result.ok ? (
-            <Alert variant="success">{result.message}</Alert>
+            <>
+              <Alert variant="success">{result.message}</Alert>
+              {eventId && <LiveEventMetrics eventId={eventId} />}
+            </>
           ) : (
             <Alert
               variant="error"
@@ -116,6 +127,64 @@ export default function DemoConsole() {
           {t.common.backToStatus}
         </Link>
       </p>
+    </div>
+  );
+}
+
+/**
+ * Live per-event metrics after SIMULATE FLOOD. Polls every 5s for 3 minutes —
+ * checking items off on the phone makes the completion figure tick up on the
+ * projector in near-real-time.
+ */
+function LiveEventMetrics({ eventId }: { eventId: string }) {
+  const { t } = useApp();
+  const [metrics, setMetrics] = useState<EventMetrics | null>(null);
+  const startedAt = useRef(Date.now());
+
+  useEffect(() => {
+    let cancelled = false;
+    async function poll() {
+      try {
+        const res = await fetch(`/api/metrics?eventId=${eventId}`);
+        if (res.ok && !cancelled) setMetrics(await res.json());
+      } catch {
+        // transient poll failure — next tick will retry
+      }
+      if (!cancelled && Date.now() - startedAt.current < METRICS_POLL_WINDOW_MS) {
+        setTimeout(poll, METRICS_POLL_MS);
+      }
+    }
+    void poll();
+    return () => {
+      cancelled = true;
+    };
+  }, [eventId]);
+
+  if (!metrics || metrics.dispatchesSent === 0) return null;
+
+  const items: Array<{ icon: React.ReactNode; label: string; value: string }> = [
+    { icon: <ShieldIcon size={13} />, label: t.home.metricsRmProtected, value: formatRmRange(metrics.rmProtected) },
+    { icon: <ClockIcon size={13} />, label: t.home.metricsLeadTime, value: formatDurationMs(metrics.leadTimeMs) },
+    { icon: <SendIcon size={13} />, label: t.home.metricsLatency, value: formatDurationMs(metrics.dispatchLatencyMs) },
+    {
+      icon: <CheckIcon size={13} />,
+      label: t.home.metricsCompletion,
+      value:
+        metrics.completionRate !== null
+          ? `${Math.round(metrics.completionRate * 100)}% (${metrics.checkedActions}/${metrics.totalActions})`
+          : "—",
+    },
+  ];
+
+  return (
+    <div className="flex flex-wrap gap-2" aria-live="polite">
+      {items.map((item) => (
+        <Badge key={item.label} tone="sky" className="inline-flex items-center gap-1.5 px-3 py-1.5">
+          {item.icon}
+          <span className="opacity-70">{item.label}:</span>
+          <span className="font-semibold tabular-nums">{item.value}</span>
+        </Badge>
+      ))}
     </div>
   );
 }

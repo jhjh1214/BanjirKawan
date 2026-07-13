@@ -65,6 +65,19 @@ export async function getDispatchCheckoffContext(
   return rows[0] ?? null;
 }
 
+/**
+ * Timestamped check-off telemetry (idempotent: re-taps don't create rows or
+ * move the original timestamp — first tap wins).
+ */
+export async function recordCheckoff(dispatchId: string, order: number): Promise<void> {
+  await getPool().query(
+    `insert into dispatch_checkoffs (dispatch_id, action_order)
+     values ($1, $2)
+     on conflict (dispatch_id, action_order) do nothing`,
+    [dispatchId, order]
+  );
+}
+
 /** Idempotently record a completed action; returns the updated completed set. */
 export async function appendCompletedAction(dispatchId: string, order: number): Promise<number[]> {
   const { rows } = await getPool().query<{ completed_actions: number[] }>(
