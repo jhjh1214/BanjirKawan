@@ -1,0 +1,17 @@
+# BanjirKawan worker — InfoBanjir poller + threshold engine (no AI, no Next.js)
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY . .
+RUN npm run worker:build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --no-audit --no-fund
+COPY --from=builder /app/dist ./dist
+COPY db ./db
+USER node
+CMD ["node", "dist/worker/main.js"]

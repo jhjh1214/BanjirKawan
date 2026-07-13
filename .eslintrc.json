@@ -1,0 +1,45 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "overrides": [
+    {
+      "files": ["src/modules/**/*.ts", "src/modules/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/*", "**/src/app/*", "../app/*", "../../app/*", "../../../app/*"],
+                "message": "Domain modules must not import from the Next.js delivery layer (src/app)."
+              },
+              {
+                "group": ["@/worker/*", "**/src/worker/*", "../worker/*", "../../worker/*", "../../../worker/*"],
+                "message": "Domain modules must not import from the worker entrypoint (src/worker)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/worker/**/*.ts", "src/modules/trigger/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@google/genai", "@google/genai/*", "@anthropic-ai/sdk", "@anthropic-ai/sdk/*"],
+                "message": "CRITICAL PATH: the worker and trigger module must never import an AI SDK. AI runs at the edges (onboarding/recovery), never during a storm."
+              },
+              {
+                "group": ["@/lib/ai", "@/lib/ai/*", "**/lib/ai", "**/lib/ai/*", "../ai/*", "../../ai/*"],
+                "message": "CRITICAL PATH: the worker and trigger module must never import from src/lib/ai. Threshold -> cache lookup -> send must survive AI outages."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
