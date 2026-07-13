@@ -41,6 +41,45 @@ const STATE_NAME_TO_CODE: Record<string, string> = {
 const cache = new Map<string, GeocodeResult>();
 let lastRequestAt = 0;
 
+/** GPS path: coords → address text + state code. Same politeness rules. */
+export async function reverseGeocode(lat: number, lng: number): Promise<GeocodeResult> {
+  const key = `rev:${lat.toFixed(4)},${lng.toFixed(4)}`;
+  const cached = cache.get(key);
+  if (cached) return cached;
+
+  const wait = lastRequestAt + MIN_INTERVAL_MS - Date.now();
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+  lastRequestAt = Date.now();
+
+  const params = new URLSearchParams({
+    lat: String(lat),
+    lon: String(lng),
+    format: "jsonv2",
+    addressdetails: "1",
+  });
+  const res = await fetch(`https://nominatim.openstreetmap.org/reverse?${params}`, {
+    headers: { "User-Agent": USER_AGENT },
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!res.ok) throw new Error(`nominatim reverse HTTP ${res.status}`);
+
+  const hit = (await res.json()) as {
+    display_name?: string;
+    address?: { state?: string; city?: string };
+  };
+  const stateName = (hit.address?.state ?? hit.address?.city ?? "").toLowerCase();
+  const result: GeocodeResult = {
+    lat,
+    lng,
+    displayName: hit.display_name ?? `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+    stateCode: STATE_NAME_TO_CODE[stateName] ?? null,
+  };
+
+  logger.info("reverse geocoded", { ...result });
+  cache.set(key, result);
+  return result;
+}
+
 export async function geocodeAddress(address: string): Promise<GeocodeResult> {
   const key = address.trim().toLowerCase();
   const cached = cache.get(key);

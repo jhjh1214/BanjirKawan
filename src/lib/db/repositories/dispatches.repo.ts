@@ -38,6 +38,52 @@ export async function updateDispatchStatus(id: string, status: DispatchStatus): 
   );
 }
 
+/** Everything the check-off callback needs, in one query. */
+export interface DispatchCheckoffContext {
+  dispatch_id: string;
+  completed_actions: number[];
+  action_orders: number[];
+  language: string;
+  telegram_chat_id: string | null;
+}
+
+export async function getDispatchCheckoffContext(
+  dispatchId: string
+): Promise<DispatchCheckoffContext | null> {
+  const { rows } = await getPool().query<DispatchCheckoffContext>(
+    `select d.id as dispatch_id,
+            coalesce(array(select jsonb_array_elements_text(d.completed_actions)::int), '{}') as completed_actions,
+            array(select (a->>'order')::int from jsonb_array_elements(p.actions) a order by (a->>'order')::int) as action_orders,
+            s.language,
+            s.telegram_chat_id
+     from dispatches d
+     join playbooks p on p.id = d.playbook_id
+     join shops s on s.id = p.shop_id
+     where d.id = $1`,
+    [dispatchId]
+  );
+  return rows[0] ?? null;
+}
+
+/** Idempotently record a completed action; returns the updated completed set. */
+export async function appendCompletedAction(dispatchId: string, order: number): Promise<number[]> {
+  const { rows } = await getPool().query<{ completed_actions: number[] }>(
+    `update dispatches
+     set completed_actions = (
+           select coalesce(jsonb_agg(distinct v order by v), '[]')
+           from (
+             select jsonb_array_elements(completed_actions)::int as v
+             union select $2::int
+           ) u
+         ),
+         updated_at = now()
+     where id = $1
+     returning array(select jsonb_array_elements_text(completed_actions)::int) as completed_actions`,
+    [dispatchId, order]
+  );
+  return rows[0]?.completed_actions ?? [];
+}
+
 export async function listDispatches(limit = 50): Promise<DispatchRow[]> {
   const { rows } = await getPool().query<DispatchRow>(
     "select * from dispatches order by updated_at desc limit $1",

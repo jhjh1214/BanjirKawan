@@ -1,12 +1,15 @@
 // BanjirKawan worker — the storm-time critical path.
-// Poll InfoBanjir → persist readings → classify → detect tier changes.
-// NO AI IMPORTS in this process, ever (ESLint-enforced). Dispatch lands Day 5.
+// Poll InfoBanjir → persist readings → classify → detect tier changes →
+// DISPATCH cached playbooks via Telegram on escalation.
+// NO AI IMPORTS in this process, ever (ESLint-enforced).
 
 import "dotenv/config";
 import { getConfig } from "@/lib/config";
 import { logger } from "@/lib/logger";
 import { closePool } from "@/lib/db/client";
 import {
+  createFloodEvent,
+  deleteReadingsOlderThanHours,
   getLatestThresholdStates,
   insertRiverReadings,
 } from "@/lib/db/repositories/events.repo";
@@ -14,34 +17,49 @@ import { upsertSystemStatus } from "@/lib/db/repositories/system.repo";
 import {
   checkFreshness,
   classify,
+  dispatchForTierChange,
   fetchStationReadings,
   severityRank,
+  THRESHOLD_TO_TIER,
   type StationReading,
   type ThresholdState,
 } from "@/modules/trigger";
 
+const FETCH_CONCURRENCY = 4; // 16 states, polite parallelism
+const RETENTION_HOURS = 48;
+const RETENTION_EVERY_MS = 60 * 60 * 1000;
+
 let shuttingDown = false;
 let lastSuccessfulFetchAt: Date | null = null;
+let lastRetentionAt = 0;
+
+async function fetchAllStates(
+  stateCodes: string[]
+): Promise<Array<StationReading & { thresholdState: ThresholdState }>> {
+  const all: Array<StationReading & { thresholdState: ThresholdState }> = [];
+  for (let i = 0; i < stateCodes.length; i += FETCH_CONCURRENCY) {
+    const chunk = stateCodes.slice(i, i + FETCH_CONCURRENCY);
+    const results = await Promise.allSettled(chunk.map((code) => fetchStationReadings(code)));
+    results.forEach((res, idx) => {
+      const stateCode = chunk[idx];
+      if (res.status === "fulfilled") {
+        lastSuccessfulFetchAt = new Date();
+        for (const r of res.value) all.push({ ...r, thresholdState: classify(r) });
+        logger.info("fetched readings", { stateCode, stations: res.value.length });
+      } else {
+        logger.error("infobanjir fetch failed", {
+          stateCode,
+          error: res.reason instanceof Error ? res.reason.message : String(res.reason),
+        });
+      }
+    });
+  }
+  return all;
+}
 
 async function pollOnce(): Promise<void> {
   const config = getConfig();
-  const all: Array<StationReading & { thresholdState: ThresholdState }> = [];
-
-  for (const stateCode of config.INFOBANJIR_STATE_CODES) {
-    try {
-      const readings = await fetchStationReadings(stateCode);
-      lastSuccessfulFetchAt = new Date();
-      for (const r of readings) {
-        all.push({ ...r, thresholdState: classify(r) });
-      }
-      logger.info("fetched readings", { stateCode, stations: readings.length });
-    } catch (err) {
-      logger.error("infobanjir fetch failed", {
-        stateCode,
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
-  }
+  const all = await fetchAllStates(config.INFOBANJIR_STATE_CODES);
 
   if (all.length > 0) {
     const previous = await getLatestThresholdStates();
@@ -49,14 +67,38 @@ async function pollOnce(): Promise<void> {
 
     for (const r of all) {
       const prev = previous.get(r.stationId) ?? null;
-      if (prev !== null && prev !== r.thresholdState) {
-        const escalating = severityRank(r.thresholdState) > severityRank(prev);
-        logger.warn(`TIER_CHANGE station=${r.stationId} from=${prev} to=${r.thresholdState}`, {
+      if (prev === null || prev === r.thresholdState) continue;
+
+      const escalating = severityRank(r.thresholdState) > severityRank(prev);
+      logger.warn(`TIER_CHANGE station=${r.stationId} from=${prev} to=${r.thresholdState}`, {
+        stationName: r.stationName,
+        levelM: r.levelM,
+        escalating,
+      });
+
+      const tier = THRESHOLD_TO_TIER[r.thresholdState];
+      if (!escalating || !tier) continue;
+
+      // The real thing: escalation into an actionable tier → flood event →
+      // cached playbooks out the door.
+      try {
+        const event = await createFloodEvent({ stationId: r.stationId, tier });
+        const summary = await dispatchForTierChange({
+          stationId: r.stationId,
           stationName: r.stationName,
-          levelM: r.levelM,
-          escalating,
+          tier,
+          floodEventId: event.id,
         });
-        // Day 5: on escalation → create flood_event → dispatchForTierChange()
+        logger.info("tier-change dispatch complete", {
+          stationId: r.stationId,
+          tier,
+          ...summary,
+        });
+      } catch (err) {
+        logger.error("tier-change dispatch crashed", {
+          stationId: r.stationId,
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     }
   }
@@ -73,8 +115,20 @@ async function pollOnce(): Promise<void> {
     at: new Date().toISOString(),
     freshness,
     lastSuccessfulFetchAt: lastSuccessfulFetchAt?.toISOString() ?? null,
-    statesPolled: config.INFOBANJIR_STATE_CODES,
+    statesPolled: getConfig().INFOBANJIR_STATE_CODES,
   });
+
+  if (Date.now() - lastRetentionAt > RETENTION_EVERY_MS) {
+    lastRetentionAt = Date.now();
+    try {
+      const deleted = await deleteReadingsOlderThanHours(RETENTION_HOURS);
+      if (deleted > 0) logger.info("retention cleanup", { deleted, olderThanHours: RETENTION_HOURS });
+    } catch (err) {
+      logger.warn("retention cleanup failed", {
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
 }
 
 async function main() {

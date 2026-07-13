@@ -33,10 +33,20 @@ export default function DemoConsole() {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
-      setResult({
-        ok: true,
-        message: fmt(t.demo.success, { tier: t.thresholds[tier === "watch" ? "alert" : tier], station: body.stationId }),
+      const d = body.dispatch ?? { sent: 0, shopsOnStation: 0, skippedNoTelegram: 0, skippedNoPlaybook: 0 };
+      const base = fmt(t.demo.success, {
+        tier: t.thresholds[tier === "watch" ? "alert" : tier],
+        station: body.stationName ?? body.stationId,
       });
+      const detail =
+        d.sent > 0
+          ? fmt(t.demo.dispatched, { sent: d.sent })
+          : fmt(t.demo.noneDispatched, {
+              shops: d.shopsOnStation,
+              noTelegram: d.skippedNoTelegram,
+              noPlaybook: d.skippedNoPlaybook,
+            });
+      setResult({ ok: true, message: `${base} ${detail}` });
     } catch (err) {
       setResult({ ok: false, message: err instanceof Error ? err.message : String(err) });
     } finally {

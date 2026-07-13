@@ -84,6 +84,23 @@ export async function createFloodEvent(input: {
   return rows[0];
 }
 
+export async function getStationName(stationId: string): Promise<string | null> {
+  const { rows } = await getPool().query<{ station_name: string }>(
+    `select station_name from river_readings where station_id = $1 order by ts desc limit 1`,
+    [stationId]
+  );
+  return rows[0]?.station_name ?? null;
+}
+
+/** Retention: whole-Malaysia polling writes ~1M rows/month — keep 48h of history. */
+export async function deleteReadingsOlderThanHours(hours: number): Promise<number> {
+  const result = await getPool().query(
+    `delete from river_readings where ts < now() - make_interval(hours => $1)`,
+    [hours]
+  );
+  return result.rowCount ?? 0;
+}
+
 export async function listFloodEvents(limit = 20): Promise<FloodEventRow[]> {
   const { rows } = await getPool().query<FloodEventRow>(
     "select * from flood_events order by started_at desc limit $1",

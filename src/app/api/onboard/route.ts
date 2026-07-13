@@ -8,7 +8,13 @@ import { createShop, updateShopLocation } from "@/lib/db/repositories/shops.repo
 import { createSiteGraph } from "@/lib/db/repositories/site-graphs.repo";
 import { getKnownStations } from "@/lib/db/repositories/events.repo";
 import { extractSiteGraphFromPhotos, type PhotoInput } from "@/modules/site-intelligence";
-import { geocodeAddress, resolveNearestStation, type GeocodeResult, type NearestStationResult } from "@/modules/geo";
+import {
+  geocodeAddress,
+  resolveNearestStation,
+  reverseGeocode,
+  type GeocodeResult,
+  type NearestStationResult,
+} from "@/modules/geo";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -30,6 +36,18 @@ export async function POST(req: NextRequest) {
   const name = String(form.get("name") ?? "").trim();
   const address = String(form.get("address") ?? "").trim();
   const photos = form.getAll("photos").filter((p): p is File => p instanceof File);
+
+  // GPS path: the browser supplied device coordinates — more accurate than
+  // forward-geocoding a typed address, and works for unnamed lorong stalls.
+  const gpsLat = Number.parseFloat(String(form.get("lat") ?? ""));
+  const gpsLng = Number.parseFloat(String(form.get("lng") ?? ""));
+  const hasGps =
+    Number.isFinite(gpsLat) &&
+    Number.isFinite(gpsLng) &&
+    gpsLat >= 0.5 &&
+    gpsLat <= 8 &&
+    gpsLng >= 99 &&
+    gpsLng <= 120;
 
   if (!name || !address) {
     return NextResponse.json({ error: "name and address are required" }, { status: 400 });
@@ -79,7 +97,18 @@ export async function POST(req: NextRequest) {
     let enrichment: { geocode: GeocodeResult; nearestStation: NearestStationResult | null } | null =
       null;
     try {
-      const geocode = await geocodeAddress(address);
+      // GPS coordinates win; reverse-geocode only fills in the state/display
+      // name. If reverse lookup fails we still proceed with raw coordinates.
+      const geocode = hasGps
+        ? await reverseGeocode(gpsLat, gpsLng).catch(
+            (): GeocodeResult => ({
+              lat: gpsLat,
+              lng: gpsLng,
+              displayName: address || `${gpsLat.toFixed(5)}, ${gpsLng.toFixed(5)}`,
+              stateCode: null,
+            })
+          )
+        : await geocodeAddress(address);
       const nearestStation = resolveNearestStation(
         geocode.lat,
         geocode.lng,
@@ -123,6 +152,7 @@ export async function POST(req: NextRequest) {
       repairs: result.repairs,
       lowConfidenceAssetIds: result.lowConfidenceAssetIds,
       enrichment,
+      botUsername: getConfig().TELEGRAM_BOT_USERNAME,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

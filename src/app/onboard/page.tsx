@@ -26,6 +26,13 @@ interface ExtractionResponse {
     geocode: { lat: number; lng: number; displayName: string; stateCode: string | null };
     nearestStation: { stationId: string; stationName: string; distanceKm: number } | null;
   } | null;
+  botUsername: string;
+}
+
+interface GpsFix {
+  lat: number;
+  lng: number;
+  accuracyM: number;
 }
 
 const CATEGORY_ICON: Record<string, string> = {
@@ -46,6 +53,30 @@ export default function OnboardWizard() {
   const [extraction, setExtraction] = useState<ExtractionResponse | null>(null);
   const [removed, setRemoved] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
+  const [gps, setGps] = useState<GpsFix | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [gpsError, setGpsError] = useState(false);
+
+  function captureLocation() {
+    setGpsError(false);
+    if (!("geolocation" in navigator)) return setGpsError(true);
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGps({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracyM: Math.round(pos.coords.accuracy),
+        });
+        setLocating(false);
+      },
+      () => {
+        setGpsError(true);
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 60_000 }
+    );
+  }
 
   /* ------------------------------ step: details ----------------------------- */
 
@@ -74,6 +105,10 @@ export default function OnboardWizard() {
     const form = new FormData();
     form.set("name", name);
     form.set("address", address);
+    if (gps) {
+      form.set("lat", String(gps.lat));
+      form.set("lng", String(gps.lng));
+    }
     for (const f of files) form.append("photos", f);
 
     try {
@@ -159,6 +194,25 @@ export default function OnboardWizard() {
                 placeholder={t.onboard.addressPlaceholder}
               />
             </Field>
+
+            <div className="space-y-2">
+              <Button type="button" variant="ghost" size="sm" loading={locating} onClick={captureLocation}>
+                {locating ? t.onboard.locating : t.onboard.useLocation}
+              </Button>
+              {gps && (
+                <p className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
+                  {fmt(t.onboard.locationCaptured, { m: gps.accuracyM })}
+                  <button
+                    type="button"
+                    onClick={() => setGps(null)}
+                    className="underline underline-offset-2 opacity-70 hover:opacity-100"
+                  >
+                    {t.onboard.locationClear}
+                  </button>
+                </p>
+              )}
+              {gpsError && <p className="text-xs text-orange-600 dark:text-orange-400">{t.onboard.locationError}</p>}
+            </div>
             <Field label={t.onboard.photos} hint={t.onboard.photosHint}>
               <input
                 type="file"
@@ -416,6 +470,18 @@ function DoneState({ extraction }: { extraction: ExtractionResponse }) {
             {fmt(t.onboard.playbookProgress, { done: playbookCount, total: PLAYBOOK_TOTAL })}
           </span>
         )}
+      </div>
+
+      <div className="mt-6 flex flex-col items-center gap-2">
+        <a
+          href={`https://t.me/${extraction.botUsername}?start=${extraction.shopId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-6 py-3 font-bold text-white transition hover:bg-sky-500"
+        >
+          {t.onboard.connectTelegram}
+        </a>
+        <p className="text-xs text-slate-500">{t.onboard.connectTelegramHint}</p>
       </div>
 
       <Link href="/" className="mt-6 inline-block text-sky-600 underline underline-offset-2 dark:text-sky-400">

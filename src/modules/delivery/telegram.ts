@@ -28,37 +28,78 @@ export interface TelegramCallbackQuery {
   data?: string;
 }
 
+export interface InlineKeyboardButton {
+  text: string;
+  callback_data: string;
+}
+
+export interface SendOptions {
+  /** Rows of inline buttons (check-off checklist). */
+  inlineKeyboard?: InlineKeyboardButton[][];
+}
+
 // --- Sending ---
 
-export async function sendMessage(chatId: string | number, text: string): Promise<DeliveryResult> {
+async function callTelegram(
+  method: string,
+  payload: Record<string, unknown>
+): Promise<{ ok: boolean; result?: unknown; error?: string }> {
   const token = getConfig().TELEGRAM_BOT_TOKEN;
   if (!token) {
-    logger.warn("telegram send skipped: TELEGRAM_BOT_TOKEN not configured", { chatId });
+    logger.warn(`telegram ${method} skipped: TELEGRAM_BOT_TOKEN not configured`);
     return { ok: false, error: "bot token not configured" };
   }
-
   try {
-    const res = await fetch(`${API_BASE}/bot${token}/sendMessage`, {
+    const res = await fetch(`${API_BASE}/bot${token}/${method}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text }),
+      body: JSON.stringify(payload),
       signal: AbortSignal.timeout(15_000),
     });
-    const body = (await res.json()) as {
-      ok: boolean;
-      result?: { message_id: number };
-      description?: string;
-    };
+    const body = (await res.json()) as { ok: boolean; result?: unknown; description?: string };
     if (!body.ok) {
-      logger.error("telegram send failed", { chatId, description: body.description });
+      logger.error(`telegram ${method} failed`, { description: body.description });
       return { ok: false, error: body.description ?? `HTTP ${res.status}` };
     }
-    return { ok: true, messageId: String(body.result?.message_id ?? "") };
+    return { ok: true, result: body.result };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    logger.error("telegram send errored", { chatId, error: message });
+    logger.error(`telegram ${method} errored`, { error: message });
     return { ok: false, error: message };
   }
+}
+
+export async function sendMessage(
+  chatId: string | number,
+  text: string,
+  options?: SendOptions
+): Promise<DeliveryResult> {
+  const payload: Record<string, unknown> = { chat_id: chatId, text };
+  if (options?.inlineKeyboard) {
+    payload.reply_markup = { inline_keyboard: options.inlineKeyboard };
+  }
+  const out = await callTelegram("sendMessage", payload);
+  if (!out.ok) return { ok: false, error: out.error };
+  const result = out.result as { message_id?: number };
+  return { ok: true, messageId: String(result?.message_id ?? "") };
+}
+
+/** Toast shown to the user after they tap an inline button. */
+export async function answerCallbackQuery(callbackQueryId: string, text: string): Promise<void> {
+  await callTelegram("answerCallbackQuery", { callback_query_id: callbackQueryId, text });
+}
+
+/** Replace the inline keyboard on an existing message (check-off progress). */
+export async function editMessageReplyMarkup(
+  chatId: string | number,
+  messageId: number,
+  inlineKeyboard: InlineKeyboardButton[][]
+): Promise<void> {
+  await callTelegram("editMessageReplyMarkup", {
+    chat_id: chatId,
+    message_id: messageId,
+    reply_markup: { inline_keyboard: inlineKeyboard },
+  });
 }
 
 export const telegramChannel: DeliveryChannel = {

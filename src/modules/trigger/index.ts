@@ -8,4 +8,4 @@ export type { ThresholdState } from "./thresholds";
 export { checkFreshness, STALE_AFTER_MS, DEAD_AFTER_MS } from "./watchdog";
 export type { Freshness } from "./watchdog";
 export { dispatchForTierChange } from "./dispatcher";
-export type { DispatchRequest } from "./dispatcher";
+export type { DispatchRequest, DispatchSummary } from "./dispatcher";

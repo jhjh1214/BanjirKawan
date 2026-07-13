@@ -15,7 +15,7 @@
 [![Gemini](https://img.shields.io/badge/Gemini_Vision-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev)
 [![Telegram](https://img.shields.io/badge/Telegram_Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org/bots)
 
-[![Tests](https://img.shields.io/badge/tests-60_passing-22c55e?style=flat-square)](./tests)
+[![Tests](https://img.shields.io/badge/tests-67_passing-22c55e?style=flat-square)](./tests)
 [![Docker](https://img.shields.io/badge/docker-2_services-2496ED?style=flat-square&logo=docker&logoColor=white)](./docker-compose.yml)
 [![Data](https://img.shields.io/badge/live_data-JPS_InfoBanjir-0ea5e9?style=flat-square)](https://publicinfobanjir.water.gov.my)
 [![Hackathon](https://img.shields.io/badge/Climate_Resilience-Hackathon_2026-f59e0b?style=flat-square)]()
@@ -126,7 +126,9 @@ flowchart LR
 | 🔁 | **AI resilience** — model fallback chain across independent free-tier quotas, request pacing, provider retry-hints honoured | ✅ live |
 | 🌐 | **Trilingual UI** — BM / EN / 中文, one language at a time, typed dictionaries with key-parity tests | ✅ live |
 | 🎨 | **Production UI** — nav tabs, light/dark mode (no-flash init), skeleton loading, guided empty states, actionable error states | ✅ live |
-| 🚀 | Dispatcher → Telegram checklists with tap-to-check-off | 🔜 Day 5 |
+| 🚀 | **Dispatcher** — threshold escalation → flood event → cached playbook → Telegram checklist with tap-to-check-off, full audit trail (queued/sent/failed/dead) | ✅ live |
+| 📍 | **GPS onboarding** — one-tap device location beats typed addresses; reverse-geocoded, station pinpointed from coordinates | ✅ live |
+| 🇲🇾 | **Whole-Malaysia monitoring** — all 16 InfoBanjir states, parallel fetch, 48h readings retention | ✅ live |
 | 🧾 | Recovery mode — damage diff → loss report | 🔜 Day 6 |
 
 ---
@@ -229,7 +231,7 @@ tests/                      unit tests on pure logic + real saved fixtures
 - [x] **D2** — vision pipeline: photos → SiteGraph → validator → confirm screen
 - [x] **D3** — enrichment: geocode + nearest station (offline DID grid decoding)
 - [x] **D4** — playbook synthesis (BM/EN) + rules engine + cache · golden fixtures
-- [ ] **D5** — dispatcher + Telegram checklists + SIMULATE FLOOD wiring → *minimum pitchable product*
+- [x] **D5** — dispatcher + Telegram checklists + SIMULATE FLOOD wiring → *minimum pitchable product* ✨
 - [ ] **D6** — recovery mode: walkthrough · damage differ · loss report
 - [ ] **D7** — street view dashboard · metrics · seed script
 - [ ] **D8** — 🧊 FREEZE · pitch assets · rehearsal

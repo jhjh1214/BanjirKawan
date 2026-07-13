@@ -7,6 +7,7 @@ const envSchema = z.object({
     .describe("Postgres connection string (Railway plugin or local docker-compose)"),
   TELEGRAM_BOT_TOKEN: z.string().default(""),
   TELEGRAM_WEBHOOK_SECRET: z.string().default(""),
+  TELEGRAM_BOT_USERNAME: z.string().default("BanjirKawanBot"),
   GEMINI_API_KEY: z.string().default(""),
   GEMINI_MODEL: z.string().default("gemini-3.5-flash"),
   // Per-model quotas are independent on the free tier — when the primary is
