@@ -12,6 +12,10 @@ interface ExtractionResponse {
   graph: SiteGraph;
   repairs: string[];
   lowConfidenceAssetIds: string[];
+  enrichment: {
+    geocode: { lat: number; lng: number; displayName: string; stateCode: string | null };
+    nearestStation: { stationId: string; stationName: string; distanceKm: number } | null;
+  } | null;
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -160,6 +164,15 @@ export default function OnboardWizard() {
 
       {step === "confirm" && extraction && (
         <div className="mt-8 space-y-6">
+          {extraction.enrichment?.nearestStation && (
+            <div className="rounded-xl border border-sky-800/60 bg-sky-950/30 p-4 text-sm">
+              <span className="font-semibold text-sky-300">📡 Your flood sentinel:</span>{" "}
+              <span className="text-slate-200">{extraction.enrichment.nearestStation.stationName}</span>{" "}
+              <span className="text-slate-500">
+                (~{extraction.enrichment.nearestStation.distanceKm} km away · monitored every 30s)
+              </span>
+            </div>
+          )}
           <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
             <p className="text-sm text-slate-400">
               The AI read your photos and found{" "}
@@ -279,8 +292,12 @@ export default function OnboardWizard() {
           <p className="text-4xl">✅</p>
           <h2 className="mt-4 text-2xl font-bold">Kedai anda dilindungi</h2>
           <p className="mt-2 text-slate-300">
-            Site graph confirmed. Next: tiered flood playbooks are generated from this inventory (Day 4) and delivered
-            by Telegram the moment your river station crosses a threshold.
+            Site graph confirmed
+            {extraction?.enrichment?.nearestStation
+              ? ` and linked to ${extraction.enrichment.nearestStation.stationName} (~${extraction.enrichment.nearestStation.distanceKm} km)`
+              : ""}
+            . Next: tiered flood playbooks are generated from this inventory (Day 4) and delivered by Telegram the
+            moment your river station crosses a threshold.
           </p>
           <a href="/" className="mt-6 inline-block text-sky-400 underline underline-offset-2">
             ← back to status

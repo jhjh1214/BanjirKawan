@@ -60,6 +60,16 @@ export async function getLatestThresholdStates(): Promise<Map<string, ThresholdS
   return new Map(rows.map((r) => [r.station_id, r.threshold_state]));
 }
 
+/** Distinct stations the worker has observed — the candidate pool for nearest-station resolution. */
+export async function getKnownStations(): Promise<Array<{ station_id: string; station_name: string }>> {
+  const { rows } = await getPool().query<{ station_id: string; station_name: string }>(
+    `select distinct on (station_id) station_id, station_name
+     from river_readings
+     order by station_id, ts desc`
+  );
+  return rows;
+}
+
 export async function createFloodEvent(input: {
   stationId: string;
   tier: string;

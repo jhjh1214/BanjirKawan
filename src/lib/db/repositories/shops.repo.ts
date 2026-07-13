@@ -61,6 +61,18 @@ export async function listShopsByStation(stationId: string): Promise<ShopRow[]> 
   return rows;
 }
 
+export async function updateShopLocation(
+  shopId: string,
+  loc: { lat: number; lng: number; stateCode: string | null; nearestStationId: string | null }
+): Promise<void> {
+  await getPool().query(
+    `update shops
+     set lat = $2, lng = $3, state_code = $4, nearest_station_id = $5
+     where id = $1`,
+    [shopId, loc.lat, loc.lng, loc.stateCode, loc.nearestStationId]
+  );
+}
+
 export async function setTelegramChatId(shopId: string, chatId: string): Promise<void> {
   await getPool().query("update shops set telegram_chat_id = $2 where id = $1", [shopId, chatId]);
 }

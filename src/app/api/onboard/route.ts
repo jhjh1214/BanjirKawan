@@ -4,9 +4,11 @@ import path from "node:path";
 import sharp from "sharp";
 import { getConfig } from "@/lib/config";
 import { logger } from "@/lib/logger";
-import { createShop } from "@/lib/db/repositories/shops.repo";
+import { createShop, updateShopLocation } from "@/lib/db/repositories/shops.repo";
 import { createSiteGraph } from "@/lib/db/repositories/site-graphs.repo";
+import { getKnownStations } from "@/lib/db/repositories/events.repo";
 import { extractSiteGraphFromPhotos, type PhotoInput } from "@/modules/site-intelligence";
+import { geocodeAddress, resolveNearestStation, type GeocodeResult, type NearestStationResult } from "@/modules/geo";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -72,7 +74,46 @@ export async function POST(req: NextRequest) {
       repairs: result.repairs.length,
     });
 
-    const siteGraph = await createSiteGraph(shop.id, result.graph, photoUrls);
+    // Enrichment: geocode + nearest station. Deliberately non-fatal — a
+    // Nominatim outage degrades onboarding, it never blocks it.
+    let enrichment: { geocode: GeocodeResult; nearestStation: NearestStationResult | null } | null =
+      null;
+    try {
+      const geocode = await geocodeAddress(address);
+      const nearestStation = resolveNearestStation(
+        geocode.lat,
+        geocode.lng,
+        (await getKnownStations()).map((s) => ({
+          stationId: s.station_id,
+          stationName: s.station_name,
+        }))
+      );
+      enrichment = { geocode, nearestStation };
+      await updateShopLocation(shop.id, {
+        lat: geocode.lat,
+        lng: geocode.lng,
+        stateCode: geocode.stateCode,
+        nearestStationId: nearestStation?.stationId ?? null,
+      });
+      logger.info("shop enriched", {
+        shopId: shop.id,
+        stateCode: geocode.stateCode,
+        nearestStation: nearestStation?.stationName,
+        distanceKm: nearestStation?.distanceKm,
+      });
+    } catch (err) {
+      logger.warn("enrichment failed (continuing without it)", {
+        shopId: shop.id,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+
+    const siteGraph = await createSiteGraph(
+      shop.id,
+      result.graph,
+      photoUrls,
+      enrichment ?? undefined
+    );
 
     return NextResponse.json({
       shopId: shop.id,
@@ -81,6 +122,7 @@ export async function POST(req: NextRequest) {
       graph: result.graph,
       repairs: result.repairs,
       lowConfidenceAssetIds: result.lowConfidenceAssetIds,
+      enrichment,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
