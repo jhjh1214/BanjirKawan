@@ -1,14 +1,26 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { useApp } from "@/components/providers/app-providers";
+import { Alert, Button, Card, Field, Input } from "@/components/ui";
+import { fmt } from "@/lib/i18n";
 
 const TIERS = ["watch", "warning", "danger"] as const;
+type Tier = (typeof TIERS)[number];
+
+const TIER_VARIANT: Record<Tier, "warning" | "danger" | "ghost"> = {
+  watch: "ghost",
+  warning: "warning",
+  danger: "danger",
+};
 
 export default function DemoConsole() {
-  const [stationId, setStationId] = useState("3516424"); // Sg. Selangor di Ampang Pecah
-  const [tier, setTier] = useState<(typeof TIERS)[number]>("warning");
+  const { t } = useApp();
+  const [stationId, setStationId] = useState("3015490"); // Sg. Damansara di TTDI Jaya
+  const [tier, setTier] = useState<Tier>("warning");
   const [busy, setBusy] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
 
   async function simulate() {
     setBusy(true);
@@ -19,78 +31,79 @@ export default function DemoConsole() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ stationId, tier }),
       });
-      const body = await res.json();
-      setResult(
-        res.ok
-          ? `Flood event recorded: ${body.floodEventId} (station ${body.stationId}, tier ${body.tier}). Dispatch wiring lands Day 5.`
-          : `Error: ${body.error ?? res.status}`
-      );
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
+      setResult({
+        ok: true,
+        message: fmt(t.demo.success, { tier: t.thresholds[tier === "watch" ? "alert" : tier], station: body.stationId }),
+      });
     } catch (err) {
-      setResult(`Error: ${err instanceof Error ? err.message : String(err)}`);
+      setResult({ ok: false, message: err instanceof Error ? err.message : String(err) });
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <main className="mx-auto max-w-xl px-6 py-16">
-      <h1 className="text-3xl font-bold">Judge console</h1>
-      <p className="mt-2 text-slate-400">
-        Fires the same pipeline a real InfoBanjir threshold crossing would — no live data, no AI,
-        no wifi dependency.
-      </p>
+    <div className="mx-auto max-w-xl px-4 py-10 sm:px-6">
+      <h1 className="text-3xl font-bold">{t.demo.title}</h1>
+      <p className="mt-2 text-slate-600 dark:text-slate-400">{t.demo.subtitle}</p>
 
-      <div className="mt-8 space-y-4 rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-        <label className="block text-sm">
-          <span className="text-slate-400">Station ID</span>
-          <input
-            value={stationId}
-            onChange={(e) => setStationId(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
-          />
-        </label>
+      <Card className="mt-8 space-y-5 p-6">
+        <Field label={t.demo.station} hint={t.demo.stationHint}>
+          <Input value={stationId} onChange={(e) => setStationId(e.target.value)} />
+        </Field>
 
         <div className="text-sm">
-          <span className="text-slate-400">Tier</span>
-          <div className="mt-2 flex gap-2">
-            {TIERS.map((t) => (
-              <button
-                key={t}
-                onClick={() => setTier(t)}
-                className={`rounded-md px-4 py-2 text-sm font-medium capitalize transition ${
-                  tier === t
-                    ? t === "danger"
-                      ? "bg-red-600 text-white"
-                      : t === "warning"
-                        ? "bg-orange-500 text-white"
-                        : "bg-yellow-500 text-slate-900"
-                    : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                }`}
+          <span className="font-medium text-slate-600 dark:text-slate-400">{t.demo.tier}</span>
+          <div className="mt-2 flex gap-2" role="group" aria-label={t.demo.tier}>
+            {TIERS.map((tr) => (
+              <Button
+                key={tr}
+                size="md"
+                variant={tier === tr ? TIER_VARIANT[tr] : "ghost"}
+                aria-pressed={tier === tr}
+                onClick={() => setTier(tr)}
+                className="capitalize"
               >
-                {t}
-              </button>
+                {tr === "watch"
+                  ? t.thresholds.alert
+                  : tr === "warning"
+                    ? t.thresholds.warning
+                    : t.thresholds.danger}
+              </Button>
             ))}
           </div>
         </div>
 
-        <button
-          onClick={simulate}
-          disabled={busy || !stationId}
-          className="w-full rounded-lg bg-sky-500 px-6 py-4 text-lg font-bold text-white transition hover:bg-sky-400 disabled:opacity-50"
-        >
-          {busy ? "Triggering…" : "🌊 SIMULATE FLOOD"}
-        </button>
+        <Button size="lg" loading={busy} disabled={!stationId.trim()} onClick={simulate}>
+          {busy ? t.demo.simulating : t.demo.simulate}
+        </Button>
 
-        {result && (
-          <p className="rounded-md bg-slate-950 p-3 text-sm text-slate-300">{result}</p>
-        )}
-      </div>
+        {result &&
+          (result.ok ? (
+            <Alert variant="success">{result.message}</Alert>
+          ) : (
+            <Alert
+              variant="error"
+              title={t.demo.failedTitle}
+              action={
+                <Button size="sm" variant="ghost" onClick={simulate}>
+                  {t.common.retry}
+                </Button>
+              }
+            >
+              <p>{result.message}</p>
+              <p className="mt-1">{t.demo.failedHint}</p>
+            </Alert>
+          ))}
+      </Card>
 
-      <p className="mt-6 text-sm text-slate-500">
-        <a href="/" className="text-sky-400 underline underline-offset-2">
-          ← back to status
-        </a>
+      <p className="mt-6 text-sm">
+        <Link href="/" className="text-sky-600 underline underline-offset-2 dark:text-sky-400">
+          {t.common.backToStatus}
+        </Link>
       </p>
-    </main>
+    </div>
   );
 }
