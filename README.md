@@ -15,7 +15,7 @@
 [![Gemini](https://img.shields.io/badge/Gemini_Vision-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev)
 [![Telegram](https://img.shields.io/badge/Telegram_Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org/bots)
 
-[![Tests](https://img.shields.io/badge/tests-90_passing-22c55e?style=flat-square)](./tests)
+[![Tests](https://img.shields.io/badge/tests-95_passing-22c55e?style=flat-square)](./tests)
 [![Docker](https://img.shields.io/badge/docker-2_services-2496ED?style=flat-square&logo=docker&logoColor=white)](./docker-compose.yml)
 [![Data](https://img.shields.io/badge/live_data-JPS_InfoBanjir-0ea5e9?style=flat-square)](https://publicinfobanjir.water.gov.my)
 [![Hackathon](https://img.shields.io/badge/Climate_Resilience-Hackathon_2026-f59e0b?style=flat-square)]()
@@ -35,6 +35,8 @@ BanjirKawan onboards a small business with **~5 phone photos**. AI vision builds
 > During the storm, the alert path is dumb, deterministic, offline-tolerant code:
 > **threshold → cache lookup → send.**
 > The resilience tool is itself resilient to the climate event. *(Enforced by ESLint: any AI import inside `src/worker/` or `src/modules/trigger/` fails the build.)*
+
+📐 **Deep dives:** [Systems-thinking analysis](./docs/systems-thinking.md) (Iceberg, causal loops, the Seven Maxims, worst-day table) · [Money & funding notes](./docs/pitch-notes.md) · [Pitch script](./docs/pitch-script.md)
 
 ---
 
@@ -130,6 +132,22 @@ flowchart LR
 | 📍 | **GPS onboarding** — one-tap device location beats typed addresses; reverse-geocoded, station pinpointed from coordinates | ✅ live |
 | 🇲🇾 | **Whole-Malaysia monitoring** — all 16 InfoBanjir states, parallel fetch, 48h readings retention | ✅ live |
 | 🧾 | **Recovery mode** — after-photos → validated damage diff → printable bantuan/takaful loss report with JPS telemetry as third-party evidence → site graph v+1 learning loop | ✅ live |
+
+---
+
+## 📊 Measured impact — from the audit trail, not a spreadsheet
+
+Every dispatch, check-off tap and loss report writes telemetry. The metrics engine (`src/modules/metrics`, 14 golden-fixture tests) derives, per flood event and overall:
+
+| Metric | Demo value (seeded kedai) |
+|---|---|
+| **RM protected** (checked-off actions, honest ranges) | RM 10,600–22,200 |
+| **Warning lead time** (first send → station hits DANGER) | 3h 12m |
+| **Detect → send latency** | 2.1s |
+| **Checklist completion** (behavioural telemetry) | 83% (5/6), first action in 90s |
+| **Claim report turnaround** (photos → signed report) | minutes, vs. weeks manually |
+
+`npm run seed:demo` loads a realistic 12-asset kedai + one completed flood event so the dashboard shows non-zero numbers with no live data and no AI calls.
 
 ---
 
@@ -233,7 +251,7 @@ tests/                      unit tests on pure logic + real saved fixtures
 - [x] **D4** — playbook synthesis (BM/EN) + rules engine + cache · golden fixtures
 - [x] **D5** — dispatcher + Telegram checklists + SIMULATE FLOOD wiring → *minimum pitchable product* ✨
 - [x] **D6** — recovery mode: after-photo walkthrough · damage differ · printable claim report · learning loop
-- [ ] **D7** — street view dashboard · metrics · seed script
+- [x] **D7** — impact metrics engine + dashboard · seed script · SMS/print fallbacks
 - [ ] **D8** — 🧊 FREEZE · pitch assets · rehearsal
 - [ ] **D9** — 🎤 pitch day
 
