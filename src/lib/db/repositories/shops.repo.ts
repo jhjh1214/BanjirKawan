@@ -53,6 +53,19 @@ export async function listShops(): Promise<ShopRow[]> {
   return rows;
 }
 
+/** Shops eligible for recovery: they have a confirmed pre-flood survey. */
+export async function listShopsWithConfirmedGraph(): Promise<
+  Array<{ id: string; name: string; address: string }>
+> {
+  const { rows } = await getPool().query<{ id: string; name: string; address: string }>(
+    `select distinct s.id, s.name, s.address
+     from shops s
+     join site_graphs g on g.shop_id = s.id and g.confirmed = true
+     order by s.name`
+  );
+  return rows;
+}
+
 export async function listShopsByStation(stationId: string): Promise<ShopRow[]> {
   const { rows } = await getPool().query<ShopRow>(
     "select * from shops where nearest_station_id = $1",

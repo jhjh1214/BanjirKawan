@@ -14,6 +14,7 @@ export type {
   RmRange,
   MetricDispatchInput,
   MetricCheckoffInput,
+  RecoveryInput,
 } from "./compute";
 
 import {
@@ -24,6 +25,7 @@ import {
   listRecentFloodEvents,
   type MetricsEventRow,
 } from "@/lib/db/repositories/metrics.repo";
+import { listConfirmedOutcomes } from "@/lib/db/repositories/outcomes.repo";
 import {
   computeEventMetrics,
   computeOverviewMetrics,
@@ -92,5 +94,9 @@ export async function getOverviewMetrics(
 ): Promise<{ overview: OverviewMetrics; recentEvents: EventMetrics[] }> {
   const events = await listRecentFloodEvents(limit);
   const recentEvents = await buildEventMetrics(events);
-  return { overview: computeOverviewMetrics(recentEvents), recentEvents };
+  const recovery = (await listConfirmedOutcomes(limit)).map((o) => ({
+    createdAt: o.created_at,
+    confirmedAt: o.confirmed_at,
+  }));
+  return { overview: computeOverviewMetrics(recentEvents, recovery), recentEvents };
 }

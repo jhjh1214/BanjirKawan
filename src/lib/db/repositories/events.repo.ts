@@ -84,6 +84,43 @@ export async function createFloodEvent(input: {
   return rows[0];
 }
 
+/** Most recent flood event on a station (to attach a recovery outcome to). */
+export async function findRecentEventForStation(
+  stationId: string,
+  withinDays = 30
+): Promise<FloodEventRow | null> {
+  const { rows } = await getPool().query<FloodEventRow>(
+    `select * from flood_events
+     where station_id = $1 and started_at > now() - make_interval(days => $2)
+     order by started_at desc limit 1`,
+    [stationId, withinDays]
+  );
+  return rows[0] ?? null;
+}
+
+/**
+ * Readings for the loss report's evidence table — the station's own published
+ * levels during the event window (objective third-party data, JPS telemetry).
+ */
+export async function getReadingsWindow(
+  stationId: string,
+  from: Date,
+  to: Date,
+  maxRows = 24
+): Promise<Array<{ level_m: string | null; threshold_state: string | null; ts: Date; station_name: string }>> {
+  const { rows } = await getPool().query(
+    `select level_m, threshold_state, ts, station_name
+     from river_readings
+     where station_id = $1 and ts between $2 and $3
+     order by ts asc`,
+    [stationId, from, to]
+  );
+  if (rows.length <= maxRows) return rows;
+  // Downsample evenly, always keeping first and last.
+  const step = (rows.length - 1) / (maxRows - 1);
+  return Array.from({ length: maxRows }, (_, i) => rows[Math.round(i * step)]);
+}
+
 export async function getStationName(stationId: string): Promise<string | null> {
   const { rows } = await getPool().query<{ station_name: string }>(
     `select station_name from river_readings where station_id = $1 order by ts desc limit 1`,

@@ -15,7 +15,7 @@
 [![Gemini](https://img.shields.io/badge/Gemini_Vision-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev)
 [![Telegram](https://img.shields.io/badge/Telegram_Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org/bots)
 
-[![Tests](https://img.shields.io/badge/tests-67_passing-22c55e?style=flat-square)](./tests)
+[![Tests](https://img.shields.io/badge/tests-90_passing-22c55e?style=flat-square)](./tests)
 [![Docker](https://img.shields.io/badge/docker-2_services-2496ED?style=flat-square&logo=docker&logoColor=white)](./docker-compose.yml)
 [![Data](https://img.shields.io/badge/live_data-JPS_InfoBanjir-0ea5e9?style=flat-square)](https://publicinfobanjir.water.gov.my)
 [![Hackathon](https://img.shields.io/badge/Climate_Resilience-Hackathon_2026-f59e0b?style=flat-square)]()
@@ -129,7 +129,7 @@ flowchart LR
 | 🚀 | **Dispatcher** — threshold escalation → flood event → cached playbook → Telegram checklist with tap-to-check-off, full audit trail (queued/sent/failed/dead) | ✅ live |
 | 📍 | **GPS onboarding** — one-tap device location beats typed addresses; reverse-geocoded, station pinpointed from coordinates | ✅ live |
 | 🇲🇾 | **Whole-Malaysia monitoring** — all 16 InfoBanjir states, parallel fetch, 48h readings retention | ✅ live |
-| 🧾 | Recovery mode — damage diff → loss report | 🔜 Day 6 |
+| 🧾 | **Recovery mode** — after-photos → validated damage diff → printable bantuan/takaful loss report with JPS telemetry as third-party evidence → site graph v+1 learning loop | ✅ live |
 
 ---
 
@@ -232,7 +232,7 @@ tests/                      unit tests on pure logic + real saved fixtures
 - [x] **D3** — enrichment: geocode + nearest station (offline DID grid decoding)
 - [x] **D4** — playbook synthesis (BM/EN) + rules engine + cache · golden fixtures
 - [x] **D5** — dispatcher + Telegram checklists + SIMULATE FLOOD wiring → *minimum pitchable product* ✨
-- [ ] **D6** — recovery mode: walkthrough · damage differ · loss report
+- [x] **D6** — recovery mode: after-photo walkthrough · damage differ · printable claim report · learning loop
 - [ ] **D7** — street view dashboard · metrics · seed script
 - [ ] **D8** — 🧊 FREEZE · pitch assets · rehearsal
 - [ ] **D9** — 🎤 pitch day

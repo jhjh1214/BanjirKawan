@@ -13,11 +13,12 @@ export function Navbar() {
   const tabs = [
     { href: "/", label: t.nav.status },
     { href: "/onboard", label: t.nav.onboard },
+    { href: "/recover", label: t.nav.recover },
     { href: "/demo", label: t.nav.demo },
   ];
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur print:hidden dark:border-slate-800 dark:bg-slate-950/90">
       <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
         <Link href="/" className="inline-flex items-center gap-2 text-lg font-bold tracking-tight">
           <WavesIcon size={20} className="text-sky-500" />

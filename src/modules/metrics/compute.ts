@@ -66,6 +66,11 @@ export interface EventMetrics {
   medianFirstCheckoffMs: number | null;
 }
 
+export interface RecoveryInput {
+  createdAt: Date; // after-photos submitted
+  confirmedAt: Date; // owner signed the report off
+}
+
 export interface OverviewMetrics {
   events: number;
   dispatchesSent: number;
@@ -76,6 +81,9 @@ export interface OverviewMetrics {
   completionRate: number | null;
   medianFirstCheckoffMs: number | null;
   avgDispatchLatencyMs: number | null;
+  /** Recovery: confirmed loss reports + median photos→signed-report time. */
+  reportsIssued: number;
+  medianReportMs: number | null;
 }
 
 export function median(values: number[]): number | null {
@@ -164,12 +172,19 @@ export function computeEventMetrics(
   };
 }
 
-export function computeOverviewMetrics(events: EventMetrics[]): OverviewMetrics {
+export function computeOverviewMetrics(
+  events: EventMetrics[],
+  recovery: RecoveryInput[] = []
+): OverviewMetrics {
   const withSends = events.filter((e) => e.dispatchesSent > 0);
   const totalActions = events.reduce((s, e) => s + e.totalActions, 0);
   const checkedActions = events.reduce((s, e) => s + e.checkedActions, 0);
 
   return {
+    reportsIssued: recovery.length,
+    medianReportMs: median(
+      recovery.map((r) => Math.max(0, r.confirmedAt.getTime() - r.createdAt.getTime()))
+    ),
     events: events.length,
     dispatchesSent: events.reduce((s, e) => s + e.dispatchesSent, 0),
     rmProtected: events.reduce((s, e) => addRange(s, e.rmProtected), ZERO),

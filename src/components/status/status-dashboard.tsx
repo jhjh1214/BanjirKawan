@@ -5,7 +5,15 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/components/providers/app-providers";
 import { Alert, Badge, Card, EmptyState, THRESHOLD_TONE } from "@/components/ui";
-import { ActivityIcon, CheckIcon, ClockIcon, SendIcon, ShieldIcon, WavesIcon } from "@/components/ui/icons";
+import {
+  ActivityIcon,
+  CheckIcon,
+  ClockIcon,
+  FileTextIcon,
+  SendIcon,
+  ShieldIcon,
+  WavesIcon,
+} from "@/components/ui/icons";
 // Imported from ./compute (not the module index) deliberately: the index
 // pulls in DB repositories, which must never enter a client bundle.
 import { formatDurationMs, formatRmRange, type OverviewMetrics } from "@/modules/metrics/compute";
@@ -65,7 +73,7 @@ function MetricsPanel({
       {!metrics || metrics.events === 0 ? (
         <p className="mt-2 text-sm text-slate-500">{t.home.metricsEmpty}</p>
       ) : (
-        <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
           <StatTile
             icon={<ShieldIcon size={14} />}
             label={t.home.metricsRmProtected}
@@ -94,6 +102,16 @@ function MetricsPanel({
             icon={<SendIcon size={14} />}
             label={t.home.metricsLatency}
             value={formatDurationMs(metrics.avgDispatchLatencyMs)}
+          />
+          <StatTile
+            icon={<FileTextIcon size={14} />}
+            label={t.home.metricsReports}
+            value={String(metrics.reportsIssued)}
+            hint={
+              metrics.medianReportMs !== null
+                ? `${t.home.metricsReportTime}: ${formatDurationMs(metrics.medianReportMs)}`
+                : undefined
+            }
           />
         </div>
       )}
