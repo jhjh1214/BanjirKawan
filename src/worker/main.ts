@@ -11,6 +11,7 @@ import {
   createFloodEvent,
   deleteReadingsOlderThanHours,
   getLatestThresholdStates,
+  getRecentHighestTierForStation,
   insertRiverReadings,
 } from "@/lib/db/repositories/events.repo";
 import { upsertSystemStatus } from "@/lib/db/repositories/system.repo";
@@ -20,6 +21,7 @@ import {
   dispatchForTierChange,
   fetchStationReadings,
   severityRank,
+  shouldDispatchEscalation,
   THRESHOLD_TO_TIER,
   type Freshness,
   type StationReading,
@@ -31,6 +33,9 @@ import { listShopsWithTelegram } from "@/lib/db/repositories/shops.repo";
 const FETCH_CONCURRENCY = 4; // 16 states, polite parallelism
 const RETENTION_HOURS = 48;
 const RETENTION_EVERY_MS = 60 * 60 * 1000;
+// Re-alert a station only on escalation to a higher tier within this window;
+// prevents a station oscillating at one threshold from spamming every cycle.
+const DEBOUNCE_HOURS = 6;
 
 let shuttingDown = false;
 let lastSuccessfulFetchAt: Date | null = null;
@@ -110,6 +115,18 @@ async function pollOnce(): Promise<void> {
 
       const tier = THRESHOLD_TO_TIER[r.thresholdState];
       if (!escalating || !tier) continue;
+
+      // Debounce: don't re-fire if this station already alerted at this tier
+      // or higher recently. Only a jump to a STRICTLY higher tier re-notifies.
+      const recentTier = await getRecentHighestTierForStation(r.stationId, DEBOUNCE_HOURS);
+      if (!shouldDispatchEscalation(tier, recentTier)) {
+        logger.info("dispatch debounced (already alerted recently)", {
+          stationId: r.stationId,
+          tier,
+          recentTier,
+        });
+        continue;
+      }
 
       // The real thing: escalation into an actionable tier → flood event →
       // cached playbooks out the door.

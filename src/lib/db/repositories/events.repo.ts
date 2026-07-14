@@ -108,6 +108,26 @@ export async function createFloodEvent(input: {
   return rows[0];
 }
 
+/**
+ * Highest tier dispatched for a station within the window — the debounce input
+ * so an oscillating station doesn't re-alert every poll cycle.
+ */
+export async function getRecentHighestTierForStation(
+  stationId: string,
+  withinHours: number
+): Promise<"watch" | "warning" | "danger" | null> {
+  const { rows } = await getPool().query<{ tier: string }>(
+    `select tier from flood_events
+     where station_id = $1 and started_at > now() - make_interval(hours => $2)
+     and tier in ('watch','warning','danger')
+     order by case tier when 'danger' then 3 when 'warning' then 2 when 'watch' then 1 else 0 end desc
+     limit 1`,
+    [stationId, withinHours]
+  );
+  const tier = rows[0]?.tier;
+  return tier === "watch" || tier === "warning" || tier === "danger" ? tier : null;
+}
+
 /** Most recent flood event on a station (to attach a recovery outcome to). */
 export async function findRecentEventForStation(
   stationId: string,

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { classify, severityRank, THRESHOLD_TO_TIER } from "@/modules/trigger";
+import {
+  classify,
+  severityRank,
+  tierRank,
+  shouldDispatchEscalation,
+  THRESHOLD_TO_TIER,
+} from "@/modules/trigger";
 import type { StationReading } from "@/modules/trigger";
 
 function reading(
@@ -72,5 +78,33 @@ describe("severityRank / tier mapping", () => {
     expect(THRESHOLD_TO_TIER.danger).toBe("danger");
     expect(THRESHOLD_TO_TIER.normal).toBeNull();
     expect(THRESHOLD_TO_TIER.unknown).toBeNull();
+  });
+});
+
+describe("shouldDispatchEscalation (debounce)", () => {
+  it("fires when the station has no recent alert", () => {
+    expect(shouldDispatchEscalation("watch", null)).toBe(true);
+    expect(shouldDispatchEscalation("danger", null)).toBe(true);
+  });
+
+  it("suppresses a repeat at the same tier (oscillation)", () => {
+    expect(shouldDispatchEscalation("watch", "watch")).toBe(false);
+    expect(shouldDispatchEscalation("warning", "warning")).toBe(false);
+  });
+
+  it("suppresses a drop to a lower tier", () => {
+    expect(shouldDispatchEscalation("watch", "warning")).toBe(false);
+    expect(shouldDispatchEscalation("warning", "danger")).toBe(false);
+  });
+
+  it("re-fires only on escalation to a strictly higher tier", () => {
+    expect(shouldDispatchEscalation("warning", "watch")).toBe(true);
+    expect(shouldDispatchEscalation("danger", "warning")).toBe(true);
+    expect(shouldDispatchEscalation("danger", "watch")).toBe(true);
+  });
+
+  it("ranks tiers in order", () => {
+    expect(tierRank("watch")).toBeLessThan(tierRank("warning"));
+    expect(tierRank("warning")).toBeLessThan(tierRank("danger"));
   });
 });

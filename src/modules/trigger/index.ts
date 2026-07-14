@@ -3,8 +3,14 @@
 
 export { fetchStationReadings, parseStationReadings, buildStateUrl } from "./infobanjir";
 export type { StationReading } from "./infobanjir";
-export { classify, severityRank, THRESHOLD_TO_TIER } from "./thresholds";
-export type { ThresholdState } from "./thresholds";
+export {
+  classify,
+  severityRank,
+  tierRank,
+  shouldDispatchEscalation,
+  THRESHOLD_TO_TIER,
+} from "./thresholds";
+export type { ThresholdState, PlaybookTierName } from "./thresholds";
 export { checkFreshness, STALE_AFTER_MS, DEAD_AFTER_MS } from "./watchdog";
 export type { Freshness } from "./watchdog";
 export { dispatchForTierChange } from "./dispatcher";

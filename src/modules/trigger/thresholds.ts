@@ -18,6 +18,28 @@ export function severityRank(state: ThresholdState): number {
   return idx === -1 ? -1 : idx;
 }
 
+export type PlaybookTierName = "watch" | "warning" | "danger";
+
+const TIER_ORDER: PlaybookTierName[] = ["watch", "warning", "danger"];
+
+export function tierRank(tier: PlaybookTierName): number {
+  return TIER_ORDER.indexOf(tier);
+}
+
+/**
+ * Debounce decision (pure): should an escalation to `tier` fire a fresh
+ * dispatch, given the highest tier already dispatched for this station in the
+ * recent window? Re-notify only on escalation to a STRICTLY higher tier —
+ * a station oscillating at one threshold must not spam a new alert each cycle.
+ */
+export function shouldDispatchEscalation(
+  tier: PlaybookTierName,
+  recentHighestTier: PlaybookTierName | null
+): boolean {
+  if (recentHighestTier === null) return true;
+  return tierRank(tier) > tierRank(recentHighestTier);
+}
+
 /**
  * Classify a reading against the station's OWN published thresholds.
  * Pure and deterministic — this sits on the storm-time critical path.
