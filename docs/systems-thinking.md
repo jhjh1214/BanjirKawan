@@ -106,9 +106,26 @@ guesses) and why tiers exist rather than a single cry-wolf alarm.
 
 ## 4 · "What if?" — designed for the worst day, not the average
 
+### 4a · The three canonical scenarios (NGFS / IPCC, per Session 1)
+
+The webinar teaches three standard futures — you don't invent them, you test
+against them. BanjirKawan's value under each:
+
+| Scenario | The world… | What it means for BanjirKawan |
+|---|---|---|
+| **Fast & smooth** | acts early; cleaner quickly, less damage | Fewer extreme floods, but the tool still delivers the *recovery + claims* half and keeps the practice muscle alive at WATCH tier. Value degrades gracefully — we're not betting on catastrophe. |
+| **Slow then sudden** | acts late; panic changes, expensive and messy | **Our sweet spot.** More frequent, more intense floods with underprepared shops — exactly the population BanjirKawan protects, at ≈RM0 marginal cost per event. |
+| **Barely acts** | does little; much worse weather | Flood frequency and severity climb steeply. Because plans are pre-cached and the storm path has no AI/cost dependency, the system *scales with the climate signal* instead of buckling under it. |
+
+The design is robust across all three — strongest exactly where the risk is
+worst. That is what "design for the worst day, not the average" means in
+practice.
+
+### 4b · Adversarial stress table (the surprise "what if?" the judges throw)
+
 | Scenario | What happens | Where it's implemented |
 |---|---|---|
-| **Floods double in frequency by 2030** | Marginal cost per additional flood ≈ RM0: playbooks are pre-computed and cached; dispatch is a DB lookup + one API call. The architecture *scales with the climate signal*. | `playbooks` cache table; `dispatcher.ts` |
+| **Floods double in frequency by 2030** | Marginal cost per additional flood ≈ RM0: playbooks are pre-computed and cached; dispatch is a DB lookup + one API call. | `playbooks` cache table; `dispatcher.ts` |
 | **InfoBanjir dies mid-storm** | Watchdog flags stale ≥10min / dead ≥1h; bound shops get a "treat heavy rain as WARNING" advisory instead of silence. Fails loud and safe. | `watchdog.ts`, `sendDegradedAdvisories` in `worker/main.ts` |
 | **Gemini / all AI APIs die during the flood** | Nothing happens. AI is not in the storm path — the lint rule makes this a build-time guarantee, not a hope. | `.eslintrc.json` (`no-restricted-imports`) |
 | **Owner's phone is dead / no data network** | The WATCH tier fired hours earlier ("act now while networks are up"); the laminated plan on the wall carries the DANGER checklist and the station's official levels. | `format.ts` early-tier note; `/plan/[shopId]` |
@@ -132,7 +149,28 @@ The pattern across every row: **move the thinking to before the disaster.**
 
 ---
 
-## 6 · One-line summary for the pitch
+## 6 · Climate-U alignment (Session 3 — prize framing)
+
+The Climate Systems Leadership Award rewards the Climate-U ethos, not just the
+rubric. BanjirKawan touches each core value — honestly, without overclaiming:
+
+| Climate-U value | How BanjirKawan expresses it |
+|---|---|
+| **Collaboration / co-creation** | The onboarding survey is *participatory*: AI proposes, the shop owner confirms and corrects every asset and value. Knowledge is co-created with the community it serves, not imposed on it. |
+| **Interdisciplinarity** | Hydrology (JPS thresholds) + computer vision + geospatial (station-grid decoding) + behavioural design (check-off telemetry) + insurance/finance (claims evidence) in one tool. |
+| **Community engagement** | The unit of the system is the individual kedai owner; the output is in their language, on the channel they already use, at their budget. |
+| **Evidence-based action** | Every alert is grounded in the station's *own published thresholds*; every loss figure traces to a confirmed pre-flood survey + independent JPS telemetry. Nothing is asserted without a checkable source. |
+| **Sustainability / long-term impact** | The learning loop compounds: each flood sharpens the next response. Resilience infrastructure that improves with use, not a one-off. |
+| **Inclusivity** | Three languages, three delivery channels (Telegram / SMS / paper), two onboarding paths (GPS / typed), and a funding model designed to subsidise the least able to pay. |
+
+**Participatory Action Research (PAR):** the pilot design — 20 shops on one
+Taman Sri Muda street, one monsoon season, measured against the neighbouring
+street — is a PAR study in miniature: reflection and action combined, with the
+affected community as co-researchers, not subjects.
+
+---
+
+## 7 · One-line summary for the pitch
 
 > We didn't add AI to a flood alert. We mapped why losses repeat — river-centric
 > warnings, no evidence, knowledge trapped in heads — and built new structure at

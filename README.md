@@ -36,7 +36,7 @@ BanjirKawan onboards a small business with **~5 phone photos**. AI vision builds
 > **threshold → cache lookup → send.**
 > The resilience tool is itself resilient to the climate event. *(Enforced by ESLint: any AI import inside `src/worker/` or `src/modules/trigger/` fails the build.)*
 
-📐 **Deep dives:** [Systems-thinking analysis](./docs/systems-thinking.md) (Iceberg, causal loops, the Seven Maxims, worst-day table) · [Money & funding notes](./docs/pitch-notes.md) · [Pitch script](./docs/pitch-script.md)
+📐 **Deep dives:** [Systems-thinking analysis](./docs/systems-thinking.md) (Iceberg, causal loops, the Seven Maxims, three scenarios, Five Marks, Climate-U map) · [100-point rubric self-audit](./docs/rubric-map.md) · [Money & funding notes](./docs/pitch-notes.md) · [Championship pitch bible](./docs/pitch-script.md)
 
 ---
 
