@@ -509,6 +509,16 @@ function DoneState({ extraction }: { extraction: ExtractionResponse }) {
           {t.onboard.connectTelegram}
         </a>
         <p className="text-xs text-slate-500">{t.onboard.connectTelegramHint}</p>
+        <a
+          href={`/plan/${extraction.shopId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex items-center gap-2 rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          <FileTextIcon size={16} />
+          {t.onboard.printPlan}
+        </a>
+        <p className="text-xs text-slate-500">{t.onboard.printPlanHint}</p>
       </div>
 
       <Link href="/" className="mt-6 inline-block text-sky-600 underline underline-offset-2 dark:text-sky-400">

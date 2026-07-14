@@ -53,6 +53,17 @@ export async function listShops(): Promise<ShopRow[]> {
   return rows;
 }
 
+/** Every shop with a Telegram binding — the degraded-mode advisory audience. */
+export async function listShopsWithTelegram(): Promise<
+  Array<{ id: string; name: string; language: string; telegram_chat_id: string }>
+> {
+  const { rows } = await getPool().query(
+    `select id, name, language, telegram_chat_id
+     from shops where telegram_chat_id is not null`
+  );
+  return rows;
+}
+
 /** Shops eligible for recovery: they have a confirmed pre-flood survey. */
 export async function listShopsWithConfirmedGraph(): Promise<
   Array<{ id: string; name: string; address: string }>

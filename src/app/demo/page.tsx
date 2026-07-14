@@ -105,6 +105,7 @@ export default function DemoConsole() {
             <>
               <Alert variant="success">{result.message}</Alert>
               {eventId && <LiveEventMetrics eventId={eventId} />}
+              <SmsPreview stationId={stationId} tier={tier} />
             </>
           ) : (
             <Alert
@@ -127,6 +128,68 @@ export default function DemoConsole() {
           {t.common.backToStatus}
         </Link>
       </p>
+    </div>
+  );
+}
+
+/**
+ * SMS fallback proof: renders the dispatched playbooks as plain-text SMS
+ * segments through the same channel-agnostic renderer the SMS driver uses.
+ */
+function SmsPreview({ stationId, tier }: { stationId: string; tier: Tier }) {
+  const { t } = useApp();
+  const [open, setOpen] = useState(false);
+  const [previews, setPreviews] = useState<Array<{ shopName: string; segments: string[] }> | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function load() {
+    setOpen(true);
+    if (previews) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/sms-preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stationId, tier }),
+      });
+      const body = await res.json();
+      setPreviews(res.ok ? (body.previews ?? []) : []);
+    } catch {
+      setPreviews([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div>
+      <Button size="sm" variant="ghost" loading={loading} onClick={open ? () => setOpen(false) : load}>
+        {t.demo.smsPreview}
+      </Button>
+      {open && previews && (
+        <div className="mt-3 space-y-3">
+          <p className="text-xs text-slate-500">{t.demo.smsPreviewHint}</p>
+          {previews.length === 0 ? (
+            <p className="text-xs text-slate-500">{t.demo.smsNone}</p>
+          ) : (
+            previews.map((p) => (
+              <div key={p.shopName} className="space-y-2">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">{p.shopName}</p>
+                {p.segments.map((seg, i) => (
+                  <div key={i}>
+                    <pre className="whitespace-pre-wrap rounded-md border border-slate-300 bg-slate-50 p-3 font-mono text-xs leading-relaxed dark:border-slate-700 dark:bg-slate-950">
+                      {seg}
+                    </pre>
+                    <p className="mt-0.5 text-right text-[10px] text-slate-400">
+                      {fmt(t.demo.smsSegment, { n: i + 1, chars: seg.length })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }

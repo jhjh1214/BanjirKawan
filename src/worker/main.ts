@@ -21,9 +21,12 @@ import {
   fetchStationReadings,
   severityRank,
   THRESHOLD_TO_TIER,
+  type Freshness,
   type StationReading,
   type ThresholdState,
 } from "@/modules/trigger";
+import { degradedModeAdvisory, resolveMessageLanguage, sendMessage } from "@/modules/delivery";
+import { listShopsWithTelegram } from "@/lib/db/repositories/shops.repo";
 
 const FETCH_CONCURRENCY = 4; // 16 states, polite parallelism
 const RETENTION_HOURS = 48;
@@ -32,6 +35,35 @@ const RETENTION_EVERY_MS = 60 * 60 * 1000;
 let shuttingDown = false;
 let lastSuccessfulFetchAt: Date | null = null;
 let lastRetentionAt = 0;
+let previousFreshness: Freshness = "fresh";
+let lastAdvisoryAt = 0;
+const ADVISORY_COOLDOWN_MS = 6 * 60 * 60 * 1000;
+
+/**
+ * Fail loud AND safe: when the feed degrades we tell every bound shop to
+ * treat heavy rain as a WARNING, instead of leaving them silently unwatched.
+ * Fires on the fresh→degraded transition, at most once per cooldown window
+ * (in-memory gate; a worker restart may re-send once, which is acceptable).
+ */
+async function sendDegradedAdvisories(freshness: Freshness): Promise<void> {
+  const degradedNow = freshness !== "fresh";
+  const wasFresh = previousFreshness === "fresh";
+  previousFreshness = freshness;
+  if (!degradedNow || !wasFresh) return;
+  if (Date.now() - lastAdvisoryAt < ADVISORY_COOLDOWN_MS) return;
+  lastAdvisoryAt = Date.now();
+
+  const shops = await listShopsWithTelegram();
+  let sent = 0;
+  for (const shop of shops) {
+    const result = await sendMessage(
+      shop.telegram_chat_id,
+      degradedModeAdvisory(resolveMessageLanguage(shop.language))
+    );
+    if (result.ok) sent++;
+  }
+  logger.warn("degraded-mode advisory sent", { freshness, shops: shops.length, sent });
+}
 
 async function fetchAllStates(
   stateCodes: string[]
@@ -108,6 +140,13 @@ async function pollOnce(): Promise<void> {
     logger.warn("data feed degraded", {
       freshness,
       lastSuccessfulFetchAt: lastSuccessfulFetchAt?.toISOString() ?? null,
+    });
+  }
+  try {
+    await sendDegradedAdvisories(freshness);
+  } catch (err) {
+    logger.error("degraded advisory failed", {
+      error: err instanceof Error ? err.message : String(err),
     });
   }
 

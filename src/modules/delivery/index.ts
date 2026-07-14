@@ -17,6 +17,8 @@ export {
   buildChecklistKeyboard,
   checkSavedToast,
   resolveMessageLanguage,
+  degradedModeAdvisory,
   BOT_COPY,
 } from "./format";
 export type { ChecklistMessage, MessageLanguage } from "./format";
+export { formatSmsChecklist, smsConsoleChannel, SMS_SEGMENT_CHARS, SMS_MAX_SEGMENTS } from "./sms";

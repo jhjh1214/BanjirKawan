@@ -28,15 +28,39 @@ export async function insertRiverReadings(
   const pool = getPool();
   const values: unknown[] = [];
   const tuples = readings.map((r, i) => {
-    const base = i * 5;
-    values.push(r.stationId, r.stationName, r.stateCode, r.levelM, r.thresholdState);
-    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5})`;
+    const base = i * 6;
+    values.push(
+      r.stationId,
+      r.stationName,
+      r.stateCode,
+      r.levelM,
+      r.thresholdState,
+      // Station's published threshold levels ride along — the printable
+      // fallback plan and the loss report cite them as official figures.
+      JSON.stringify({ thresholds: r.thresholds })
+    );
+    return `($${base + 1}, $${base + 2}, $${base + 3}, $${base + 4}, $${base + 5}, $${base + 6})`;
   });
   await pool.query(
-    `insert into river_readings (station_id, station_name, state_code, level_m, threshold_state)
+    `insert into river_readings (station_id, station_name, state_code, level_m, threshold_state, raw)
      values ${tuples.join(", ")}`,
     values
   );
+}
+
+/** Latest known station identity + published thresholds (from raw payload). */
+export async function getStationInfo(stationId: string): Promise<{
+  stationName: string;
+  thresholds: { normal: number | null; alert: number | null; warning: number | null; danger: number | null } | null;
+} | null> {
+  const { rows } = await getPool().query<{ station_name: string; raw: { thresholds?: never } | null }>(
+    `select station_name, raw from river_readings
+     where station_id = $1 order by ts desc limit 1`,
+    [stationId]
+  );
+  if (!rows[0]) return null;
+  const raw = rows[0].raw as { thresholds?: { normal: number | null; alert: number | null; warning: number | null; danger: number | null } } | null;
+  return { stationName: rows[0].station_name, thresholds: raw?.thresholds ?? null };
 }
 
 export async function getLatestReadings(limit = 20): Promise<RiverReadingRow[]> {
