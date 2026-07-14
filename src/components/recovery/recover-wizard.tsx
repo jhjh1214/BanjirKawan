@@ -42,6 +42,11 @@ export function RecoverWizard({
 }) {
   const { t } = useApp();
   const [step, setStep] = useState<Step>("select");
+
+  // Reset the viewport whenever the wizard advances (steps can be tall).
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [step]);
   const [shopId, setShopId] = useState(shops[0]?.id ?? "");
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);

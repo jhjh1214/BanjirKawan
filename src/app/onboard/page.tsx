@@ -62,6 +62,12 @@ const CATEGORY_ICON: Record<string, React.ReactNode> = {
 export default function OnboardWizard() {
   const { t } = useApp();
   const [step, setStep] = useState<Step>("details");
+
+  // Wizard steps can be tall; entering a new step scrolled halfway down a
+  // previous one is disorienting — reset the viewport on every transition.
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [step]);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [files, setFiles] = useState<File[]>([]);

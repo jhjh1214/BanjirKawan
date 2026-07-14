@@ -69,7 +69,8 @@ export const Button = forwardRef<
       )}
       {...rest}
     >
-      {loading && <Spinner size="sm" className="border-white/40 border-t-white" />}
+      {/* text-current: the arc inherits the button's own text colour */}
+      {loading && <Spinner size="sm" className="text-current" />}
       {children}
     </button>
   );
@@ -204,6 +205,13 @@ export function Alert({
 
 /* -------------------------------- Spinner --------------------------------- */
 
+const SPINNER_SIZE = { sm: 16, md: 24, lg: 40 } as const;
+
+/**
+ * SVG arc spinner: a faded full-circle track + a solid quarter arc in
+ * currentColor. Unlike the border-color trick, the rotating arc stays
+ * visible in every theme and inside any button variant.
+ */
 export function Spinner({
   size = "md",
   className,
@@ -211,18 +219,27 @@ export function Spinner({
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
+  const px = SPINNER_SIZE[size];
   return (
-    <span
-      role="status"
-      aria-label="loading"
-      className={cx(
-        "inline-block animate-spin rounded-full border-slate-300 border-t-sky-500 dark:border-slate-700",
-        size === "sm" && "h-4 w-4 border-2",
-        size === "md" && "h-6 w-6 border-[3px]",
-        size === "lg" && "h-10 w-10 border-4",
-        className
-      )}
-    />
+    <span role="status" aria-label="loading" className={cx("inline-flex text-sky-500", className)}>
+      <svg
+        width={px}
+        height={px}
+        viewBox="0 0 24 24"
+        fill="none"
+        className="animate-spin"
+        aria-hidden
+        focusable="false"
+      >
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+        <path
+          d="M21 12a9 9 0 0 0-9-9"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+      </svg>
+    </span>
   );
 }
 
