@@ -477,6 +477,9 @@ function DoneState({ extraction }: { extraction: ExtractionResponse }) {
 
   const station = extraction.enrichment?.nearestStation;
   const ready = playbookCount >= PLAYBOOK_TOTAL;
+  // Fallback keeps the deep link valid even if the env var is unset.
+  const botUsername = extraction.botUsername || "BanjirKawanBot";
+  const startCommand = `/start ${extraction.shopId}`;
 
   return (
     <Card className="mt-12 p-8 text-center">
@@ -506,7 +509,7 @@ function DoneState({ extraction }: { extraction: ExtractionResponse }) {
 
       <div className="mt-6 flex flex-col items-center gap-2">
         <a
-          href={`https://t.me/${extraction.botUsername}?start=${extraction.shopId}`}
+          href={`https://t.me/${botUsername}?start=${extraction.shopId}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-6 py-3 font-bold text-white transition hover:bg-sky-500"
@@ -515,6 +518,16 @@ function DoneState({ extraction }: { extraction: ExtractionResponse }) {
           {t.onboard.connectTelegram}
         </a>
         <p className="text-xs text-slate-500">{t.onboard.connectTelegramHint}</p>
+
+        {/* Device-proof fallback: any phone with Telegram can bind manually. */}
+        <details className="mt-1 w-full max-w-md text-left">
+          <summary className="cursor-pointer text-center text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+            {fmt(t.onboard.connectManual, { bot: `@${botUsername}` })}
+          </summary>
+          <code className="mt-2 block select-all break-all rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-center font-mono text-xs dark:border-slate-700 dark:bg-slate-950">
+            {startCommand}
+          </code>
+        </details>
         <a
           href={`/plan/${extraction.shopId}`}
           target="_blank"

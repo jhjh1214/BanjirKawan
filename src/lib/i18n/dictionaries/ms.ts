@@ -114,6 +114,7 @@ export const ms: Dictionary = {
     playbookSlow: "Penjanaan mengambil masa lebih lama daripada biasa. Ia diteruskan di latar belakang — selamat untuk tinggalkan halaman ini.",
     connectTelegram: "Sambungkan Telegram",
     connectTelegramHint: "Satu ketikan — di sinilah senarai semak banjir anda akan tiba.",
+    connectManual: "Butang tidak buka Telegram? Buka {bot} dalam app Telegram dan hantar mesej ini:",
     printPlan: "Cetak pelan banjir anda",
     printPlanHint: "Laminat dan lekatkan dekat kaunter — berfungsi walaupun telefon mati.",
   },

@@ -116,6 +116,7 @@ export const en = {
     playbookSlow: "Generation is taking longer than usual (busy free-tier AI). It continues in the background — safe to leave this page.",
     connectTelegram: "Connect Telegram",
     connectTelegramHint: "One tap — this is where your flood checklist arrives.",
+    connectManual: "Button not opening Telegram? Open {bot} in the Telegram app and send this message:",
     printPlan: "Print your pelan banjir",
     printPlanHint: "Laminate it near the counter — works when phones don't.",
   },

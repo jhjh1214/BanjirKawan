@@ -114,6 +114,7 @@ export const zh: Dictionary = {
     playbookSlow: "生成时间比平常长（免费 AI 高峰期）。后台会继续处理 — 可以放心离开此页面。",
     connectTelegram: "连接 Telegram",
     connectTelegramHint: "一键连接 — 水灾行动清单将发送到这里。",
+    connectManual: "按钮无法打开 Telegram？在 Telegram 应用中打开 {bot} 并发送此消息：",
     printPlan: "打印您的水灾方案",
     printPlanHint: "过塑后贴在柜台附近 — 手机没电也能用。",
   },
