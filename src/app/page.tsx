@@ -1,4 +1,3 @@
-import { getLatestReadings } from "@/lib/db/repositories/events.repo";
 import { getSystemStatus } from "@/lib/db/repositories/system.repo";
 import { checkFreshness } from "@/modules/trigger";
 import { getOverviewMetrics } from "@/modules/metrics";
@@ -6,15 +5,14 @@ import { StatusDashboard, type StatusData } from "@/components/status/status-das
 
 export const dynamic = "force-dynamic";
 
-// Server component: data only. All presentation (i18n, theme, states) lives
-// in the client StatusDashboard.
+// Server component: heartbeat + metrics only. The interactive readings table
+// (filter/search/paginate) is a client component fetching /api/readings.
 export default async function Home() {
   const data: StatusData = {
     workerHealthy: false,
     heartbeatAgeSeconds: null,
     feedFreshness: null,
     statesPolled: [],
-    readings: [],
     dbError: null,
     metrics: null,
   };
@@ -29,14 +27,6 @@ export default async function Home() {
       data.statesPolled = hb.statesPolled ?? [];
     }
     data.metrics = (await getOverviewMetrics()).overview;
-    data.readings = (await getLatestReadings(15)).map((r) => ({
-      stationId: r.station_id,
-      stationName: r.station_name,
-      stateCode: r.state_code,
-      levelM: r.level_m,
-      thresholdState: r.threshold_state ?? "unknown",
-      ts: r.ts.toISOString(),
-    }));
   } catch (err) {
     data.dbError = err instanceof Error ? err.message : String(err);
   }

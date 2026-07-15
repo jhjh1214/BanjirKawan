@@ -4,16 +4,9 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/components/providers/app-providers";
-import { Alert, Badge, Card, EmptyState, THRESHOLD_TONE } from "@/components/ui";
-import {
-  ActivityIcon,
-  CheckIcon,
-  ClockIcon,
-  FileTextIcon,
-  SendIcon,
-  ShieldIcon,
-  WavesIcon,
-} from "@/components/ui/icons";
+import { Alert, Badge, Card } from "@/components/ui";
+import { CheckIcon, ClockIcon, FileTextIcon, SendIcon, ShieldIcon, WavesIcon } from "@/components/ui/icons";
+import { ReadingsExplorer } from "@/components/status/readings-explorer";
 // Imported from ./compute (not the module index) deliberately: the index
 // pulls in DB repositories, which must never enter a client bundle.
 import { formatDurationMs, formatRmRange, type OverviewMetrics } from "@/modules/metrics/compute";
@@ -24,14 +17,6 @@ export interface StatusData {
   heartbeatAgeSeconds: number | null;
   feedFreshness: string | null;
   statesPolled: string[];
-  readings: Array<{
-    stationId: string;
-    stationName: string;
-    stateCode: string;
-    levelM: string | null;
-    thresholdState: string;
-    ts: string;
-  }>;
   dbError: string | null;
   metrics: OverviewMetrics | null;
 }
@@ -120,7 +105,7 @@ function MetricsPanel({
 }
 
 export function StatusDashboard({ data }: { data: StatusData }) {
-  const { t, locale } = useApp();
+  const { t } = useApp();
   const router = useRouter();
 
   // Server component re-fetches on refresh — live dashboard with zero client fetch code.
@@ -193,43 +178,7 @@ export function StatusDashboard({ data }: { data: StatusData }) {
               )}
             </p>
 
-            {data.readings.length === 0 ? (
-              <EmptyState icon={<ActivityIcon size={36} />} title={t.home.emptyTitle} body={t.home.emptyBody} />
-            ) : (
-              <div className="mt-4 overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="text-xs uppercase tracking-wider text-slate-500">
-                    <tr>
-                      <th className="py-2 pr-4 font-medium">{t.home.colStation}</th>
-                      <th className="py-2 pr-4 font-medium">{t.home.colLevel}</th>
-                      <th className="py-2 pr-4 font-medium">{t.home.colState}</th>
-                      <th className="py-2 font-medium">{t.home.colSeen}</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {data.readings.map((r) => (
-                      <tr key={r.stationId}>
-                        <td className="py-2.5 pr-4">
-                          <div className="font-medium">{r.stationName}</div>
-                          <div className="text-xs text-slate-500">
-                            {r.stationId} · {r.stateCode}
-                          </div>
-                        </td>
-                        <td className="py-2.5 pr-4 tabular-nums">{r.levelM ?? "—"}</td>
-                        <td className="py-2.5 pr-4">
-                          <Badge tone={THRESHOLD_TONE[r.thresholdState] ?? "slate"}>
-                            {t.thresholds[r.thresholdState as keyof typeof t.thresholds] ?? r.thresholdState}
-                          </Badge>
-                        </td>
-                        <td className="py-2.5 text-xs text-slate-500">
-                          {new Date(r.ts).toLocaleTimeString(locale === "zh" ? "zh-CN" : "en-MY")}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <ReadingsExplorer />
           </>
         )}
       </Card>

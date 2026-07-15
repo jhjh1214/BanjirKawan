@@ -74,6 +74,42 @@ export async function getLatestReadings(limit = 20): Promise<RiverReadingRow[]> 
   return rows;
 }
 
+export interface ReadingFilter {
+  state?: string; // state code, e.g. SEL
+  threshold?: string; // normal|alert|warning|danger|unknown
+  q?: string; // free text over station name / id
+}
+
+/**
+ * Latest reading per station with optional filters. The set is one row per
+ * station (≤ a few hundred), so distance-sorting and pagination happen in the
+ * route (which can reach the geo module); this returns the whole filtered set.
+ */
+export async function queryLatestReadings(filter: ReadingFilter): Promise<RiverReadingRow[]> {
+  const q = filter.q?.trim() || null;
+  const { rows } = await getPool().query<RiverReadingRow>(
+    `select * from (
+       select distinct on (station_id) *
+       from river_readings
+       order by station_id, ts desc
+     ) latest
+     where ($1::text is null or state_code = $1)
+       and ($2::text is null or threshold_state = $2)
+       and ($3::text is null or station_name ilike '%' || $3 || '%' or station_id ilike '%' || $3 || '%')
+     order by ts desc`,
+    [filter.state ?? null, filter.threshold ?? null, q]
+  );
+  return rows;
+}
+
+/** Distinct state codes currently in the readings table — the filter facet. */
+export async function getDistinctStates(): Promise<string[]> {
+  const { rows } = await getPool().query<{ state_code: string }>(
+    `select distinct state_code from river_readings where state_code is not null order by state_code`
+  );
+  return rows.map((r) => r.state_code);
+}
+
 /** Latest persisted threshold state per station — used by the worker to detect tier changes. */
 export async function getLatestThresholdStates(): Promise<Map<string, ThresholdState | null>> {
   const { rows } = await getPool().query<{ station_id: string; threshold_state: ThresholdState | null }>(

@@ -131,6 +131,7 @@ flowchart LR
 | 🚀 | **Dispatcher** — threshold escalation → flood event → cached playbook → Telegram checklist with tap-to-check-off, full audit trail (queued/sent/failed/dead) | ✅ live |
 | 📍 | **GPS onboarding** — one-tap device location beats typed addresses; reverse-geocoded, station pinpointed from coordinates | ✅ live |
 | 🇲🇾 | **Whole-Malaysia monitoring** — all 16 InfoBanjir states, parallel fetch, 48h readings retention | ✅ live |
+| 🔎 | **Readings explorer** — filter by state/level, search by station name/ID, postcode→nearest or GPS→nearest with distance, paginated across every station | ✅ live |
 | 🧾 | **Recovery mode** — after-photos → validated damage diff → printable bantuan/takaful loss report with JPS telemetry as third-party evidence → site graph v+1 learning loop | ✅ live |
 
 ---
