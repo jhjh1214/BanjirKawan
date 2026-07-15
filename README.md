@@ -15,7 +15,7 @@
 [![Gemini](https://img.shields.io/badge/Gemini_Vision-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev)
 [![Telegram](https://img.shields.io/badge/Telegram_Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org/bots)
 
-[![Tests](https://img.shields.io/badge/tests-95_passing-22c55e?style=flat-square)](./tests)
+[![Tests](https://img.shields.io/badge/tests-100_passing-22c55e?style=flat-square)](./tests)
 [![Docker](https://img.shields.io/badge/docker-2_services-2496ED?style=flat-square&logo=docker&logoColor=white)](./docker-compose.yml)
 [![Data](https://img.shields.io/badge/live_data-JPS_InfoBanjir-0ea5e9?style=flat-square)](https://publicinfobanjir.water.gov.my)
 [![Hackathon](https://img.shields.io/badge/Climate_Resilience-Hackathon_2026-f59e0b?style=flat-square)]()
