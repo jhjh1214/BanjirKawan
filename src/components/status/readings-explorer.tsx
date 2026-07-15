@@ -165,7 +165,7 @@ export function ReadingsExplorer() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={t.home.searchPlaceholder}
-            className="min-w-[12rem] flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm sm:w-auto sm:min-w-[12rem] sm:flex-1 dark:border-slate-700 dark:bg-slate-950"
           />
         )}
         {mode === "postcode" && (
@@ -173,7 +173,7 @@ export function ReadingsExplorer() {
             value={postcode}
             onChange={(e) => setPostcode(e.target.value)}
             placeholder={t.home.postcodePlaceholder}
-            className="min-w-[10rem] flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-950"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm sm:w-auto sm:min-w-[10rem] sm:flex-1 dark:border-slate-700 dark:bg-slate-950"
           />
         )}
         {mode === "gps" && (
@@ -192,7 +192,7 @@ export function ReadingsExplorer() {
       </div>
 
       {/* filters */}
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+      <div className="mt-2 grid grid-cols-2 gap-2 text-xs sm:flex sm:flex-wrap sm:items-center">
         <select
           value={stateFilter}
           onChange={(e) => setStateFilter(e.target.value)}
@@ -220,7 +220,7 @@ export function ReadingsExplorer() {
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
-          className="rounded-md border border-slate-300 bg-white px-2 py-1.5 dark:border-slate-700 dark:bg-slate-950"
+          className="col-span-2 rounded-md border border-slate-300 bg-white px-2 py-1.5 sm:col-span-1 dark:border-slate-700 dark:bg-slate-950"
         >
           <option value="recent">{t.home.sortRecent}</option>
           <option value="level">{t.home.sortLevel}</option>

@@ -132,6 +132,7 @@ flowchart LR
 | 📍 | **GPS onboarding** — one-tap device location beats typed addresses; reverse-geocoded, station pinpointed from coordinates | ✅ live |
 | 🇲🇾 | **Whole-Malaysia monitoring** — all 16 InfoBanjir states, parallel fetch, 48h readings retention | ✅ live |
 | 🔎 | **Readings explorer** — filter by state/level, search by station name/ID, postcode→nearest or GPS→nearest with distance, paginated across every station | ✅ live |
+| 🗺️ | **Live danger map** — every station plotted and colour-coded by threshold (Leaflet), GPS "near me" with nearest-station line, tap-for-detail; dark-mode aware | ✅ live |
 | 🧾 | **Recovery mode** — after-photos → validated damage diff → printable bantuan/takaful loss report with JPS telemetry as third-party evidence → site graph v+1 learning loop | ✅ live |
 
 ---

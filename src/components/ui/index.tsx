@@ -152,6 +152,15 @@ export const THRESHOLD_TONE: Record<string, BadgeTone> = {
   unknown: "slate",
 };
 
+/** Threshold state → hex colour, for non-Tailwind surfaces (Leaflet markers). */
+export const THRESHOLD_HEX: Record<string, string> = {
+  normal: "#10b981",
+  alert: "#eab308",
+  warning: "#f97316",
+  danger: "#ef4444",
+  unknown: "#94a3b8",
+};
+
 /* --------------------------------- Alert ---------------------------------- */
 
 type AlertVariant = "error" | "warning" | "info" | "success";

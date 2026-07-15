@@ -1,12 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/components/providers/app-providers";
 import { Alert, Badge, Card } from "@/components/ui";
 import { CheckIcon, ClockIcon, FileTextIcon, SendIcon, ShieldIcon, WavesIcon } from "@/components/ui/icons";
 import { ReadingsExplorer } from "@/components/status/readings-explorer";
+
+// Leaflet touches `window`; load the map only in the browser.
+const StationMap = dynamic(
+  () => import("@/components/status/station-map").then((m) => m.StationMap),
+  { ssr: false }
+);
 // Imported from ./compute (not the module index) deliberately: the index
 // pulls in DB repositories, which must never enter a client bundle.
 import { formatDurationMs, formatRmRange, type OverviewMetrics } from "@/modules/metrics/compute";
@@ -107,6 +114,7 @@ function MetricsPanel({
 export function StatusDashboard({ data }: { data: StatusData }) {
   const { t } = useApp();
   const router = useRouter();
+  const [view, setView] = useState<"table" | "map">("table");
 
   // Server component re-fetches on refresh — live dashboard with zero client fetch code.
   useEffect(() => {
@@ -162,23 +170,41 @@ export function StatusDashboard({ data }: { data: StatusData }) {
           </div>
         ) : (
           <>
-            <p className="mt-2 text-xs text-slate-500">
-              {t.home.autoRefresh}
-              {data.feedFreshness && (
-                <>
-                  {" · "}
-                  {t.home.feed}: {data.feedFreshness}
-                </>
-              )}
-              {data.statesPolled.length > 0 && (
-                <>
-                  {" · "}
-                  {t.home.polling}: {data.statesPolled.join(", ")}
-                </>
-              )}
-            </p>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs text-slate-500">
+                {t.home.autoRefresh}
+                {data.feedFreshness && (
+                  <>
+                    {" · "}
+                    {t.home.feed}: {data.feedFreshness}
+                  </>
+                )}
+                {data.statesPolled.length > 0 && (
+                  <>
+                    {" · "}
+                    {t.home.polling}: {data.statesPolled.join(", ")}
+                  </>
+                )}
+              </p>
+              <div className="flex overflow-hidden rounded-md border border-slate-300 text-xs dark:border-slate-700">
+                {(["table", "map"] as const).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setView(v)}
+                    aria-pressed={view === v}
+                    className={
+                      view === v
+                        ? "bg-sky-600 px-3 py-1.5 font-semibold text-white"
+                        : "bg-transparent px-3 py-1.5 font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                    }
+                  >
+                    {v === "table" ? t.home.tableView : t.home.mapView}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            <ReadingsExplorer />
+            {view === "table" ? <ReadingsExplorer /> : <StationMap />}
           </>
         )}
       </Card>
