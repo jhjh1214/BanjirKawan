@@ -1,173 +1,219 @@
-# BanjirKawan — Championship Pitch Bible
+# BanjirKawan — The Winning Pitch (5 min, online, idea + business)
 
-**5 minutes + 2 minutes Q&A · Team of 3 · scored on the 100-point rubric.**
-Prize: Climate Systems Leadership Award.
+**Revised against the organiser's confirmation (WhatsApp, Melisa Lius).** The
+event is **online via Zoom, 22 Jul, 9am–5:30pm**. Asked whether we demo the built
+product, the organiser said: **"The latter one — focus on presenting your idea and
+business sides of the solution."** There are also **3 mentoring sessions** during
+the day with working professionals.
 
-This script is built backwards from the rubric. Every beat is tagged with the
-category it scores and the webinar language it echoes, so the judges hear their
-own framework reflected back. Deliver it with the deployed app + one phone —
-the demo path needs no live InfoBanjir, no AI, no venue wifi.
+So this pitch is an **idea + business pitch, screen-shared over Zoom** — *not* a
+live product demo. The working, deployed product is used as **traction/proof**
+(embedded screenshots + a short recording in the deck), which de-risks the whole
+business case. Its role: "this isn't a concept — we've already built it and it
+runs on real data." Then we spend our minutes on **problem, systems, solution,
+and the business.**
+
+**Problem anchored:** Problem 1 — *"Keep something important running in bad
+weather."* Its example names **shops** first and lists **"flood-warning texts"**;
+its systems angle — *"the fix needs power, phones and roads too"* — is our
+three-channel design. BanjirKawan is the textbook answer.
+
+**Rubric (confirmed):** Problem Understanding **25** · Quality of Solution **25** ·
+Systems Thinking **20** · Metrics **15** · Clarity **15**. Judges are
+systems-leadership academics (Thomas Lim, Dean; Tan Bee Lay, Impact Partner), so
+Systems is the tiebreaker — but the organiser's steer means **the business model
+is front-and-centre for Quality of Solution + Metrics.**
+
+- **A — Problem, System Map & Money** (Problem Understanding 25 + Systems Thinking)
+- **B — The Solution & the Business** (Quality of Solution 25 + Metrics 15)
+- **C — Systems Depth, Impact & Close** (Systems Thinking 20 + Clarity 15)
+
+> Delivery: one person screen-shares the deck (`deck-spec.md`) the whole time.
+> Practise the Zoom setup: shared slides, camera on for whoever's speaking, no
+> reliance on the live app loading.
 
 ---
 
-## Rubric coverage map (memorise this table)
+## [0:00–0:30] A · Hook & Frame  `[Problem Understanding]`
+*(Slide 2. Speak slowly, camera on.)*
 
-| Rubric category | Pts | Where we win it | Owner |
-|---|---|---|---|
-| **Problem Understanding** | 25 | Frame (one place, named users) + the weather→wallet chain, live | **P1** |
-| **Systems Thinking** | 20 | Iceberg + Five Marks + AI-out-of-critical-path + Problem-1 systems angle | **P3** |
-| **Quality of Solution** | 25 | Working, deployed, resilient-by-design demo; honest limits | **P2** |
-| **Metrics & Measurability** | 15 | RM protected, lead time, completion, claim turnaround — live on screen | **P2** |
-| **Clarity of Pitch** | 15 | One place, one problem, one solution; the 6-step spine; clean handoffs | **all** |
-
-**The 6-step build is the visible spine** (say the step names aloud):
-Frame → Analyse → Money → Idea → Fund → Pitch.
-
----
-
-## Roles (3 presenters, clean handoffs)
-
-- **P1 — The Problem (0:00–1:30):** hook, Frame, Analyse, the money chain. Owns *Problem Understanding*.
-- **P2 — The Solution + Proof (1:30–3:40):** the Idea, the live demo, the metrics. Owns *Quality of Solution* + *Metrics*.
-- **P3 — The Systems + The Money + Close (3:40–5:00):** systems slide, Fund, the close. Owns *Systems Thinking*.
-- **Q&A:** route by topic (table at the end). One person answers, others add only if asked.
-
----
-
-## The script (timed, verbatim-ready)
-
-### P1 — 0:00 · Hook *(Clarity)*
-> "December 2021. Kak Ros runs a kedai runcit in Taman Sri Muda, Shah Alam.
-> The government's river station — Sungai Damansara, 2.9 kilometres from her
-> shop — crossed WARNING at 2pm. The warning was published. She lost RM40,000
-> anyway. **Not because the warning didn't exist — because nobody translated
-> 'river at warning' into *her* freezer, *her* rice sacks, *her* next three
-> hours.**"
-
-### P1 — 0:30 · Frame + Analyse *(Problem Understanding — say the step names)*
-> "**Frame:** one place — a flood-prone shophouse street — and one climate
-> problem: physical flood risk. **Analyse:** we asked the 'what if?' the
-> hackathon teaches — *what if December 2021 repeats, but every shop has six
-> usable hours?* Malaysia already has world-class telemetry: ~200 real-time
-> river stations with published thresholds. What's missing is **the last
-> metre** — from the river gauge to the shop floor. That is the entire gap we
-> close."
-
-### P1 — 1:00 · Money — the weather→wallet chain *(Problem Understanding + Metrics setup)*
-> "Follow the money, the way Session 1 taught: **weather event → what's hit →
-> the effect → the money.** A flood hits Kak Ros's floor-level freezer and
-> stock — that's all four money effects at once: **damaged stuff** (RM of
-> ruined equipment), **fewer sales** (days shut), **higher costs** (cleanup,
-> spoiled stock), and **costlier loans** (no evidence, denied claims, bridge
-> borrowing). December 2021 was RM6.1 billion in national losses. Every one of
-> those ringgit started as a shop like hers." *(hand to P2)*
-
-### P2 — 1:30 · The Idea *(Quality of Solution — say the step)*
-> "**Idea — the 'get-ready' kind, which the webinar calls resilience.**
-> BanjirKawan. On a *dry day*, we onboard the shop with five phone photos. AI
-> vision builds a structured risk map — every asset, its height off the floor,
-> its ringgit value. The owner corrects it on one screen. Then we pre-compute
-> tiered, timed action playbooks and **cache** them. Here's the engineering
-> thesis: **AI is never in the storm path.** It thinks on dry days. When the
-> flood comes, the alert path is dumb, deterministic code — threshold, cache
-> lookup, send."
-
-### P2 — 2:00 · LIVE DEMO *(Quality of Solution + Metrics — the 90 seconds that win)*
-1. *(Dashboard)* "Live JPS data — every station in Malaysia, polled every
-   minute. These impact numbers come from the dispatch audit trail, not a
-   spreadsheet. It's already caught **two real river escalations** on live
-   data."
-2. *(Judge console — tap SIMULATE FLOOD, hold up the phone)* "Sungai Damansara
-   crosses WARNING." *(phone buzzes)* "Her checklist — ranked by ringgit saved,
-   timed, in Bahasa Melayu. Watch —" *(tap a check-off on the phone)* "—
-   completion ticks live on screen. That's **behavioural telemetry** no
-   warning system in this country has ever had."
-3. *(The line that lands — Session 1's AI warning)* "The webinar says: *AI can
-   be wrong — always check its answers.* We do, three ways: confidence flags,
-   an owner-confirm screen, and a deterministic validator that rejects
-   hallucinations. And if every AI API on Earth died right now, **this still
-   fires** — our linter physically blocks AI from the storm path. Resilience
-   enforced by the build system, not by memory."
-4. *(Recover → open the loss report)* "Two weeks later: five after-photos, and
-   this — an itemised claim report whose evidence column is **JPS's own
-   telemetry**, an independent third party. Before the flood we save her
-   stock. After it, we get her paid."
-
-### P2 — 3:20 · Metrics headline *(Metrics & Measurability)*
-> "Measured, not promised, on the live dashboard: **RM 10,600–22,200
-> protected** in one event, **3-hour 12-minute** warning lead time, **2.1-second**
-> dispatch, **83% checklist completion**, claim reports in **minutes, not
-> weeks.** All auto-captured — the audit trail *is* the metrics slide." *(hand
-> to P3)*
-
-### P3 — 3:40 · Systems Thinking slide *(Systems Thinking — the 20-point category)*
-> "We treated this as a systems problem. The **Iceberg:** the *event* is a
-> flooded shop; the *pattern* is the same shops flooding every monsoon despite
-> warnings; the *systemic structure* is that warnings are river-centric, there's
-> no evidence baseline, and the knowledge lives in the owner's head; the
-> *mental model* is 'banjir is fate — mop and restock.' We built new structure
-> at every level, and we changed the mental model to: **'a warning is my
-> three-hour action window, and my loss is claimable.'**
+> "December 2021. Kak Ros runs a kedai runcit in Taman Sri Muda. The government's
+> river station — two-point-nine kilometres away — crossed WARNING at two in the
+> afternoon. The warning was published. She lost forty thousand ringgit anyway.
 >
-> We designed for the **worst day, not the average.** Feed dies? A watchdog
-> tells every shop to treat heavy rain as a warning. Networks die? The earliest
-> tier fired hours before the water, and there's a laminated plan on the wall.
-> Floods double by 2030? Marginal cost per event is zero — the plans are
-> already cached. And the Problem-1 systems angle — *the fix needs power,
-> phones and roads too* — is exactly why we have three delivery channels:
-> Telegram, SMS, and paper."
+> Not because the warning didn't exist — because **nobody translated 'river at
+> warning' into *her* freezer, *her* rice sacks, *her* next three hours.** The
+> brief asks us to keep one place running when the weather turns bad. We picked the
+> flood-prone kedai — and we found *why* the warnings already there don't help."
 
-### P3 — 4:20 · Fund *(Problem Understanding / the 6-step 'Fund' + Clarity)*
-> "**Fund** — three payers the webinar's own examples name. **Insurance and
-> takaful operators:** a completed checklist is a claim that never happens; a
-> verified report is a claim that costs minutes, not adjuster-weeks. **State
-> councils and JPS:** resilience at software cost, plus the first ground-truth
-> data on whether warnings produce action. And the **kedai** at RM19 a month —
-> continuity planning used to be a corporate luxury; now it's a photo survey."
+## [0:30–1:15] A · Analyse & Map the System  `[Systems Thinking — the panel's core]`
+*(Slide 3: the system map. Point at each node with your cursor.)*
 
-### P3 — 4:45 · Close *(Clarity)*
-> "One clear place. One clear problem. One clear solution, built and running.
-> **Every flood warning becomes your shop's personal survival plan — and every
-> survival plan becomes your claim evidence.** The rivers are already telling
-> us. BanjirKawan makes sure Kak Ros hears it in time — and gets paid after."
+> "So we mapped the system. Rain feeds rivers; Malaysia has world-class
+> telemetry — **around two hundred live river stations** with published danger
+> thresholds. That data reaches an agency dashboard — and then it **stops.**
+>
+> *(cursor on the broken link)* Between the river gauge and the shop floor is a gap
+> we call **the last metre.** Everything upstream — sensors, models, thresholds —
+> is solved and expensive. Everything downstream — a flooded shop, a denied claim,
+> a panic loan — flows from this **one broken link.**
+>
+> On the iceberg: the **event** is a flooded shop; the **pattern** is the same
+> shops flooding every monsoon *despite* warnings; the **structure** is warnings
+> that are river-centric with no shop-level translation and no evidence trail; the
+> **mental model** is 'banjir is fate — you mop and restock.' The brief's own
+> question is *'what if floods double?'* — they will, and every extra flood widens
+> exactly this gap. **So the last metre is our intervention point: the
+> highest-leverage, lowest-cost place in the entire system.**"
+
+## [1:15–1:45] A · Money — weather to wallet  `[Problem Understanding · sets up the business]`
+
+> "And a flood isn't water, it's money. The chain: weather event → what's hit →
+> effect → cost. Water reaches her floor-level freezer and stock and triggers
+> **all four money effects at once** — damaged goods, lost sales while she's shut,
+> cleanup costs, and a costlier loan because with no evidence her claim is denied.
+> December 2021 was **six-point-one billion ringgit** nationally. Every ringgit
+> started as a shop like hers — and that RM 6.1B is the market we're addressing."
+
+*(A → B.)* → A: "So here's what we built, and the business around it. **[B].**"
+
+## [1:45–2:20] B · The Solution — the idea + proof it's real  `[Quality of Solution]`
+*(Slide 5 = the design principle; Slide 6 = embedded screenshots + the 15s recording.)*
+
+> "BanjirKawan. The design principle answers the brief's own systems angle — *'the
+> fix needs power, phones and roads too'* — so **the AI is never in the storm
+> path.** On a **dry day**, AI vision turns five phone photos into a risk map of
+> every asset — its height off the floor, its ringgit value — and the owner
+> confirms it, so nothing is hallucinated. We pre-compute tiered action playbooks
+> and **cache** them. When the flood comes, the alert path is **dumb, deterministic
+> code** — threshold, cache lookup, send. After the flood, five photos become an
+> itemised **claim report** whose evidence is the river authority's own telemetry.
+>
+> And this isn't a concept — *(Slide 6, cue the recording)* **we've built and
+> deployed it.** It's monitoring **301 real river stations**, it's already caught
+> two real escalations this week, and here's a warning firing to a shop owner's
+> phone and the action ticking off, live. Built product, real data. That de-risks
+> everything I'm about to say about the business."
+
+## [2:20–3:15] B · The Business  `[Quality of Solution 25 + Metrics — the organiser's focus]`
+*(Slide 7: business model. This is the section the organiser told us to lead with.)*
+
+> "The business. It's **B2B2C**, and the systems view hands us **three payers, and
+> the shop is the smallest of them.**
+>
+> **One — insurers and takaful.** This is the anchor. A completed checklist is a
+> claim that never happens; a verified, telemetry-backed report is a claim that
+> costs *minutes* instead of adjuster-weeks. We sell risk reduction and faster,
+> cheaper claims — priced per policy or per claim avoided.
+>
+> **Two — state and local councils.** Flood resilience for their SMEs at software
+> cost, not sandbags — coverage of a whole district for the price of a rounding
+> error in a disaster budget.
+>
+> **Three — the kedai**, freemium at **RM 19 a month**: basic alerts free to drive
+> adoption, the plan-and-claim features paid.
+>
+> The economics are the point: onboarding uses **one** AI call on a dry day, and
+> every storm-time alert after that is a database lookup and one message — **the
+> marginal cost per shop per flood is effectively zero.** So it scales to the whole
+> RM 6.1-billion problem without cost scaling with it. And it compounds: every shop
+> we onboard builds a **data moat** — site graphs and real behavioural completion
+> data no competitor and no government dashboard has. Go to market through **one
+> takaful partner and one council pilot** — a single flood-prone street, measured
+> against the street next to it."
+
+## [3:15–3:45] B · Impact, measured  `[Metrics 15 — real numbers]`
+*(Slide 8: metric tiles.)*
+
+> "And we measure impact, not adjectives — these are pulled live from our running
+> system: **RM 10,600 to 22,200 protected** in a single event, a **3-hour-12-minute**
+> warning window, **83%** of actions completed, first action in **90 seconds**, and
+> a claim report produced in **4 minutes versus weeks** by hand. Those are the
+> numbers a takaful actuary and a council both underwrite against."
+
+*(B → C.)* → C: "And it holds up as a *system* — which is the whole point. **[C].**"
+
+## [3:45–4:35] C · Systems Depth & Transferability  `[Systems Thinking 20 — the tiebreaker]`
+*(Slide 9: two loops + worst-day table; Slide 10: SEA map.)*
+
+> "Three things make this a resilient system, not just an app.
+>
+> **Feedback loops.** Every completed checklist teaches us which actions owners
+> actually take — a balancing loop that tightens the playbook each monsoon. Every
+> claim we get paid builds the trust that brings the next shop in — a reinforcing
+> loop. It gets smarter *and* bigger from use.
+>
+> **Designed for the worst day, not the average.** Feed dies? A watchdog tells
+> every shop to treat heavy rain as a warning. Network dies? The earliest tier
+> fired hours before the water — and there's a laminated plan on the wall. That's
+> the brief's *power-phones-roads* point answered with **three channels: Telegram,
+> SMS, and paper.** No single point of failure decides whether Kak Ros acts.
+>
+> **And it transfers.** The structure — telemetry, translate the last metre, act,
+> then evidence — isn't Malaysian. It's Johor, Jakarta, and the Medan valley this
+> hackathon's own trip visits. Same monsoon, same gap, same fix, same three payers."
+
+## [4:35–5:00] C · Close  `[Clarity 15]`
+*(Slide 10.)*
+
+> "One place. One broken link — the last metre. One intervention, and we've already
+> built it, deployed it, and put a business around it. **Every flood warning becomes
+> a shop's personal survival plan, and every survival plan becomes its claim
+> evidence.** The rivers are already telling us. BanjirKawan makes sure Kak Ros
+> hears it in time — and gets paid after. Terima kasih."
 
 ---
 
-## The 6-tick "strong solution" self-audit (the webinar's bar)
+## The 3 mentoring sessions (day-of plan)
 
-Say any judge can tick all six — name them if it fits:
+Mentors are working professionals; the organiser said *"show the mentors your
+solution and get advice."* Treat each as a free rehearsal + expert stress-test.
 
-- ☑ **One clear place** — a flood-prone kedai street; Taman Sri Muda persona.
-- ☑ **Asked 'what if?'** — Dec 2021 repeats with 6h lead; worst-day stress table.
-- ☑ **Money makes sense** — all four effects, quantified live in ringgit.
-- ☑ **Systems view (won't backfire)** — AI out of the critical path, enforced by lint.
-- ☑ **A way to pay** — insurers, councils, RM19/mo subscription.
-- ☑ **Real & honest** — deployed and tested; limits stated (below).
+- **Have ready to show them (60 seconds):** the system map (Slide 3), the
+  three-payer model (Slide 7), and the "it's already built" proof (Slide 6).
+- **Ask each mentor a sharp, specific question** (don't ask "what do you think?"):
+  1. *Business mentor:* "Which of our three payers would you chase first, and what
+     would make a takaful partner say yes to a pilot?"
+  2. *Systems/impact mentor:* "Where could this backfire or create alert fatigue,
+     and is our debounce + tiering enough to prevent it?"
+  3. *Any mentor:* "In a 5-minute online pitch, what's the one thing you'd cut and
+     the one thing you'd spend more time on?"
+- **After each session:** note one change, apply it before the next. Judges reward
+  teams who visibly refined — that's the point of Phase 2.
 
 ---
 
-## Q&A routing (2 minutes — assign an owner per topic)
+## Q&A prep (keep ready in case the panel asks)
 
-| Question | Owner | Answer |
+| Question | Who | Answer |
 |---|---|---|
-| **"Is it really built / does it work?"** | P2 | "Deployed on Railway, live now. 95 unit tests, golden fixtures from real generated output, three-language parity tests. This is a running system, not a mockup." |
-| **"Telegram/data down during the flood?"** | P3 | "Three layers: *timing* — the earliest tier fires hours before water, while networks are up, and says so; *variety* — the same playbook renders to 160-character SMS behind a swappable channel; *paper* — a laminated danger plan printed at onboarding. That's the Problem-1 systems angle answered." |
-| **"What if InfoBanjir itself fails?"** | P3 | "A watchdog detects staleness within 10 minutes and messages every shop: treat heavy rain as a warning. We fail loud and safe — the failure mode was designed first." |
-| **"Isn't this just another alert app?"** | P1 | "Alerts exist — that's the problem, they don't act. The webinar's own words: *a warning only helps if people can act.* Shop-level playbooks priced in ringgit, check-off telemetry, and a claims-grade evidence baseline don't exist anywhere else." |
-| **"Does the AI hallucinate?"** | P2 | "Three defences — confidence flags, owner confirmation, a deterministic validator that rejects and regenerates. In testing, shown an undamaged shop, it honestly reported zero damage. That's the *always check its answers* rule, built in." |
-| **"Scalability / cost?"** | P2 | "Storm-time marginal cost per event is a database lookup and one API call — effectively zero. The whole country's stations are polled by one worker on a hobby-tier box right now." |
-| **"Equity — non-smartphone owners?"** | P3 | "Printed plan for execution, SMS for degraded phones, and the insurer/council side of the model exists to subsidise the shops least able to pay. Honest limit: fully offline onboarding needs a field partner — that's our pilot design, not a solved problem." |
-| **"What's next?"** | P1 | "A pilot street in Taman Sri Muda with a takaful partner: 20 shops, one monsoon season, measured against the neighbouring street." |
-| **"You're only three — how did you build all this?"** | any | "The discipline lives in the code, not in us — the no-AI-in-the-critical-path rule is a build failure, not a promise. That's the whole thesis: a resilient system shouldn't depend on any one person remembering to be careful." |
+| Why is the last metre the leverage point, not better sensors? | A | "Sensors are solved and expensive — Malaysia already has 200 stations. The cheapest, highest-leverage fix is translation and action. We add value where the system is actually broken." |
+| Who really pays, and why now? | B | "Insurers first — a verified telemetry-backed report cuts claim cost and fraud; a completed checklist avoids the claim entirely. Climate is repricing flood risk right now, so they're motivated buyers." |
+| What stops a big insurer building this themselves? | B | "The data moat and the neutral position. We aggregate site graphs and behavioural data across shops and carriers; the river-authority telemetry is a neutral third party no single insurer owns." |
+| Is it actually built or vapourware? | B | "Deployed and live — 100 tests, real JPS data, 301 stations, two real detections this week. The screenshots and recording are our own running system." |
+| Alert fatigue / unintended consequences? | C | "Tiered escalation plus a debounce that only re-alerts on a strictly higher tier — we never cry wolf, and completion data lets us tune down, not up." |
+| Equity — non-smartphone owners? | C | "Printed plan, SMS fallback, and the insurer/council model subsidises those least able to pay. Honest limit: fully offline onboarding needs a field partner — that's the pilot." |
+| Why Malaysia at a Singapore event? | A | "The structure is regional — Singapore flash floods, Johor, Jakarta, the Medan valley the trip visits. We built where the open telemetry exists; the design ports directly." |
+| Only three of you — how so complete? | any | "The discipline lives in the code: 'no AI in the critical path' is a build failure, not a good intention. A resilient system shouldn't depend on anyone remembering to be careful." |
 
 ---
 
-## Stage logistics & dry-run checklist
+## Pre-pitch checklist (online)
 
-- [ ] Seed run on production (`npm run seed:demo`) — dashboard shows non-zero metrics.
-- [ ] Presenter's phone bound to the demo shop (chat already linked) — SIMULATE FLOOD buzzes it.
-- [ ] One confirmed loss report pre-created so *Recover* opens instantly (and `reportsIssued` shows a number).
-- [ ] Language set to BM for the checklist reveal (switch to EN if the room needs it).
-- [ ] Backup screen-recording of the full arc on the laptop. Joke ready: *"our demo's critical path doesn't depend on live wifi either."*
-- [ ] Rehearse the P1→P2→P3 handoffs 5×; each handoff is one sentence, no dead air.
-- [ ] Demo path needs **only the deployed app + one phone.** Nothing else.
+- [ ] **Deck exported to PDF and uploaded** — required deliverable + the pitch itself.
+- [ ] Zoom: screen-share the slides; test share + audio + the embedded recording plays.
+- [ ] The 15–20s SIMULATE-FLOOD recording is embedded in Slide 6 (no live app needed).
+- [ ] Screenshots captured in **light mode** with the seeded demo data (non-zero metrics).
+- [ ] Whoever screen-shares drives all 10 slides; speakers hand off by name.
+- [ ] Rehearse to **under 5:00** (online cutoffs are strict) — time it 5×.
+- [ ] Camera on for the active speaker; stable connection; backup presenter can share if one drops.
+- [ ] Used all 3 mentoring sessions and applied one change from each.
+
+---
+
+## The 6-tick "strong solution" self-audit
+
+☑ One clear place (flood-prone kedai) · ☑ Asked 'what if floods double?' · ☑ Money
+makes sense (weather→wallet, 4 effects, RM 6.1B market) · ☑ Systems view that won't
+backfire (loops, worst-day, debounce) · ☑ A way to pay (3 payers, near-zero
+marginal cost) · ☑ Real & honest (deployed, tested, limits stated).
