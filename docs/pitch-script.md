@@ -66,14 +66,19 @@ is front-and-centre for Quality of Solution + Metrics.**
 > exactly this gap. **So the last metre is our intervention point: the
 > highest-leverage, lowest-cost place in the entire system.**"
 
-## [1:15–1:45] A · Money — weather to wallet  `[Problem Understanding · sets up the business]`
+## [1:15–1:50] A · Money — and the social cost  `[Problem Understanding · sets up business + equity]`
 
 > "And a flood isn't water, it's money. The chain: weather event → what's hit →
 > effect → cost. Water reaches her floor-level freezer and stock and triggers
 > **all four money effects at once** — damaged goods, lost sales while she's shut,
 > cleanup costs, and a costlier loan because with no evidence her claim is denied.
-> December 2021 was **six-point-one billion ringgit** nationally. Every ringgit
-> started as a shop like hers — and that RM 6.1B is the market we're addressing."
+> December 2021 was **six-point-one billion ringgit** nationally — that's the market.
+>
+> **But the money effects don't stop at money.** Each ringgit is also a livelihood,
+> a job, a family pushed into debt, a neighbourhood that loses its only shop. And
+> they land hardest on those least able to absorb them — the uninsured, the
+> informal, women-run micro-businesses like Kak Ros. That's the social externality
+> the systems view forces us to see."
 
 *(A → B.)* → A: "So here's what we built, and the business around it. **[B].**"
 
@@ -131,36 +136,49 @@ is front-and-centre for Quality of Solution + Metrics.**
 > a claim report produced in **4 minutes versus weeks** by hand. Those are the
 > numbers a takaful actuary and a council both underwrite against."
 
-*(B → C.)* → C: "And it holds up as a *system* — which is the whole point. **[C].**"
+*(B → C.)* → C: "And here's why it holds as a *system* — the whole point. **[C].**"
 
-## [3:45–4:35] C · Systems Depth & Transferability  `[Systems Thinking 20 — the tiebreaker]`
-*(Slide 9: two loops + worst-day table; Slide 10: SEA map.)*
+## [3:45–4:20] C · Root cause, not symptom  `[Systems Thinking 20 — the panel's book]`
+*(Slide 9: Shifting-the-Burden archetype + vicious→virtuous loop. This is the
+beat Dr. Kevin / Dean Lim are grading — use their vocabulary out loud.)*
 
-> "Three things make this a resilient system, not just an app.
+> "Now the systems core. Today's response pays out *after* the flood — relief and
+> loans. In systems terms that's the **'Shifting the Burden'** archetype: leaning on
+> the symptomatic quick fix lets real resilience wither, so the problem keeps
+> returning. And it drives a **vicious reinforcing loop** — flood → loss → debt →
+> thinner buffer → the next flood hits harder → closure or displacement → the
+> neighbourhood loses its shop. That loop **falls first on those least able to
+> absorb it.** This is where fairness meets systems.
 >
-> **Feedback loops.** Every completed checklist teaches us which actions owners
-> actually take — a balancing loop that tightens the playbook each monsoon. Every
-> claim we get paid builds the trust that brings the next shop in — a reinforcing
-> loop. It gets smarter *and* bigger from use.
->
-> **Designed for the worst day, not the average.** Feed dies? A watchdog tells
-> every shop to treat heavy rain as a warning. Network dies? The earliest tier
-> fired hours before the water — and there's a laminated plan on the wall. That's
-> the brief's *power-phones-roads* point answered with **three channels: Telegram,
-> SMS, and paper.** No single point of failure decides whether Kak Ros acts.
->
-> **And it transfers.** The structure — telemetry, translate the last metre, act,
-> then evidence — isn't Malaysian. It's Johor, Jakarta, and the Medan valley this
-> hackathon's own trip visits. Same monsoon, same gap, same fix, same three payers."
+> Our move is to **shift the intervention upstream and reverse the loop**: early
+> warning → action → less loss → telemetry-backed evidence → faster payout → trust →
+> more shops protected → better data → better playbooks. **Same loop, run the other
+> way. That's the leverage point.**"
 
-## [4:35–5:00] C · Close  `[Clarity 15]`
-*(Slide 10.)*
+## [4:20–4:45] C · Designed for the whole system  `[Systems Thinking · unintended consequences]`
+*(Slide 10: resilience + equity + consequences-we-designed-against.)*
 
-> "One place. One broken link — the last metre. One intervention, and we've already
-> built it, deployed it, and put a business around it. **Every flood warning becomes
-> a shop's personal survival plan, and every survival plan becomes its claim
-> evidence.** The rivers are already telling us. BanjirKawan makes sure Kak Ros
-> hears it in time — and gets paid after. Terima kasih."
+> "And because a flood is a whole system, we designed for the whole system.
+> **Resilient:** feed dies, a watchdog says treat heavy rain as a warning; network
+> dies, the earliest tier already fired and there's a paper plan on the wall — three
+> channels, Telegram, SMS, paper, because the fix needs *power, phones and roads*
+> too. **Fair by design:** insurer-and-council funding subsidises the shops least
+> able to pay, and the owner owns their data — a warning you need resources to act
+> on is regressive. And we **named the unintended consequences and designed against
+> them:** insurers could use the data to redline the most exposed — so we sell
+> resilience, not risk-scoring for exclusion; a digital divide — so SMS and paper;
+> alert fatigue — so tiered alerts with a debounce and the owner in control. A
+> systems approach anticipates the harm, not just the good."
+
+## [4:45–5:00] C · Transfer & close  `[Clarity 15]`
+*(Slide 11: SEA map.)*
+
+> "And it transfers — the structure ports to Johor, Jakarta, the Medan valley this
+> trip visits. Same monsoon, same last-metre gap, same fix. One place, one broken
+> link, one intervention — already built, deployed, with a business and a fairness
+> model around it. **Every flood warning becomes a shop's survival plan, and every
+> survival plan becomes its claim evidence.** The rivers are already telling us;
+> BanjirKawan makes sure Kak Ros hears it in time — and gets paid after. Terima kasih."
 
 ---
 
@@ -187,6 +205,9 @@ solution and get advice."* Treat each as a free rehearsal + expert stress-test.
 
 | Question | Who | Answer |
 |---|---|---|
+| **Could insurers use this data to redline / drop the most exposed shops?** | C | "The exact unintended consequence we designed against. The shop owns its data; we sell resilience and verified claims, not risk-scoring for exclusion; and we work with councils at the community level to keep the most exposed *covered*, not dropped. A systems solution has to anticipate that harm." |
+| **What about the social costs — displacement, job loss?** | C | "That's the vicious loop we're breaking: flood → debt → displacement, and it hits the vulnerable first. By cutting the loss and speeding the payout, we keep the shop open, the jobs intact, and the family out of the debt spiral. The social externality *is* the point, not a footnote." |
+| **How is this equitable — who gets left behind?** | C | "Fairness is a design principle, not an add-on: SMS and paper for the non-smartphone owners, insurer/council funding that subsidises those least able to pay, and owner-owned data. A warning you need resources to act on is regressive — we built against that." |
 | Why is the last metre the leverage point, not better sensors? | A | "Sensors are solved and expensive — Malaysia already has 200 stations. The cheapest, highest-leverage fix is translation and action. We add value where the system is actually broken." |
 | Who really pays, and why now? | B | "Insurers first — a verified telemetry-backed report cuts claim cost and fraud; a completed checklist avoids the claim entirely. Climate is repricing flood risk right now, so they're motivated buyers." |
 | What stops a big insurer building this themselves? | B | "The data moat and the neutral position. We aggregate site graphs and behavioural data across shops and carriers; the river-authority telemetry is a neutral third party no single insurer owns." |

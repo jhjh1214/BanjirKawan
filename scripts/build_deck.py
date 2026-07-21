@@ -242,9 +242,14 @@ for i, (title, sub) in enumerate(effects):
     add_text(s, l + 0.15, 3.25, 2.55, 0.6, title, 18, INK, bold=True, align=PP_ALIGN.CENTER)
     if sub:
         add_text(s, l + 0.15, 3.85, 2.55, 0.5, sub, 14, RED if "evidence" in sub else SECONDARY, align=PP_ALIGN.CENTER)
-add_text(s, 0.6, 5.05, 12.13, 1.0, "RM 6.1 billion", 60, INK, bold=True, align=PP_ALIGN.CENTER)
-add_text(s, 0.6, 6.25, 12.13, 0.5, "national flood losses, Dec 2021 — the market we address",
-         16, SECONDARY, align=PP_ALIGN.CENTER)
+add_text(s, 0.6, 4.85, 12.13, 1.0, "RM 6.1 billion", 56, INK, bold=True, align=PP_ALIGN.CENTER)
+add_text(s, 0.6, 5.95, 12.13, 0.4, "national flood losses, Dec 2021 — the market we address",
+         15, SECONDARY, align=PP_ALIGN.CENTER)
+b = add_bar(s, 0.6, 6.45, 12.13, 0.45, ACCENT); b.text_frame.vertical_anchor = MSO_ANCHOR.MIDDLE
+p = b.text_frame.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
+run = p.add_run(); run.text = ("… but each ringgit is also a livelihood, a job, a family's debt — "
+                               "social costs that hit the most vulnerable hardest.")
+run.font.size = Pt(14); run.font.color.rgb = WHITE; run.font.name = FONT; run.font.italic = True
 add_footer(s)
 notes(s, "And a flood isn't water, it's money. The chain: weather event, what's hit, effect, "
          "cost. Water reaches her floor-level freezer and stock and triggers all four money "
@@ -378,49 +383,81 @@ notes(s, "And we measure impact, not adjectives — these are pulled live from o
          "produced in four minutes versus weeks by hand. Those are the numbers a takaful actuary "
          "and a council both underwrite against.")
 
-# ============ SLIDE 9 (systems) ============
+# ============ SLIDE 9 (root cause, archetype, loops, justice) ============
 s = slide(); add_bg(s)
-add_headline(s, "Built as a system, not an app")
-box(s, 0.6, 1.8, 5.8, 1.15, fill=LIGHT_GREEN, border=None)
-add_text(s, 0.85, 1.92, 5.4, 0.35, "BALANCING", 14, GREEN, bold=True)
-add_text(s, 0.85, 2.3, 5.4, 0.6, "completed checklists → better playbooks (learns each monsoon)", 16, INK)
-box(s, 0.6, 3.1, 5.8, 1.15, fill=LIGHT_BLUE, border=None)
-add_text(s, 0.85, 3.22, 5.4, 0.35, "REINFORCING", 14, ACCENT, bold=True)
-add_text(s, 0.85, 3.6, 5.4, 0.6, "paid claims → trust → more shops (grows from use)", 16, INK)
-# worst-day table
-rows, cols = 4, 2
-tbl_shape = s.shapes.add_table(rows, cols, Inches(6.7), Inches(1.8), Inches(6.0), Inches(2.6))
-tbl = tbl_shape.table
-tbl.columns[0].width = Inches(2.0); tbl.columns[1].width = Inches(4.0)
-data = [("If…", "Then…"),
-        ("Data feed dies", "Watchdog: treat heavy rain as a warning"),
-        ("Network dies", "Earliest tier fired hours early + paper plan"),
-        ("Floods double", "Marginal cost ≈ 0 — plans already cached")]
-for r in range(rows):
-    for c in range(cols):
-        cell = tbl.cell(r, c)
-        cell.fill.solid()
-        cell.fill.fore_color.rgb = ACCENT if r == 0 else WHITE
-        tf = cell.text_frame; tf.word_wrap = True
-        p = tf.paragraphs[0]; run = p.add_run(); run.text = data[r][c]
-        f = run.font; f.size = Pt(13 if r else 14); f.name = FONT
-        f.bold = (r == 0); f.color.rgb = WHITE if r == 0 else INK
-b = add_bar(s, 0.6, 5.9, 12.13, 0.6, ACCENT); b.text_frame.vertical_anchor = MSO_ANCHOR.MIDDLE
-p = b.text_frame.paragraphs[0]; p.alignment = PP_ALIGN.CENTER
-run = p.add_run(); run.text = "3 channels — Telegram · SMS · Paper. No single point of failure."
-run.font.size = Pt(18); run.font.bold = True; run.font.color.rgb = WHITE; run.font.name = FONT
+add_headline(s, "Root cause, not symptom")
+# Archetype: Shifting the Burden
+box(s, 0.6, 1.7, 5.9, 1.85, fill=BG_SOFT)
+add_text(s, 0.85, 1.83, 5.4, 0.4, "“Shifting the Burden” archetype", 16, INK, bold=True)
+box_text(s, 0.85, 2.3, 2.5, 0.72, "Symptom fix:\nrelief + loans (after)", 13, INK, fill=LIGHT_GREY, border=CARD_BORDER)
+box_text(s, 3.9, 2.3, 2.35, 0.72, "Fundamental:\nanticipation (before)", 13, WHITE, bold=True, fill=ACCENT, border=None)
+add_text(s, 0.85, 3.08, 5.4, 0.4, "Leaning on the quick fix lets real resilience wither.", 13, SECONDARY, italic=True)
+# Vicious social loop
+box(s, 0.6, 3.75, 5.9, 2.65, fill=RGBColor(0xFE, 0xF2, 0xF2), border=None)
+add_text(s, 0.85, 3.88, 5.4, 0.4, "Vicious cycle (reinforcing)", 15, RED, bold=True)
+add_text(s, 0.85, 4.35, 5.4, 1.4,
+         "flood → loss → debt → thinner buffer → next flood worse → closure / displacement → the neighbourhood loses its shop",
+         15, INK)
+add_text(s, 0.85, 5.7, 5.4, 0.6,
+         "Falls first on those least able to absorb it — uninsured, informal, women-run micro-shops.",
+         13, RED)
+# Our virtuous loop
+box(s, 6.7, 1.7, 6.0, 4.7, fill=LIGHT_BLUE, border=None)
+add_text(s, 6.95, 1.85, 5.5, 0.4, "We shift the intervention upstream — and reverse the loop", 16, ACCENT, bold=True)
+add_text(s, 6.95, 2.5, 5.5, 3.0,
+         "early warning → action → less loss → telemetry-backed evidence → faster payout → trust → "
+         "more shops protected → better data → better playbooks",
+         18, INK)
+add_text(s, 6.95, 5.75, 5.5, 0.55, "Same loop, run the other way. That is the leverage point.", 14, ACCENT, bold=True)
 add_footer(s)
-notes(s, "Three things make this a resilient system, not just an app. Feedback loops: every "
-         "completed checklist teaches us which actions owners actually take — a balancing loop "
-         "that tightens the playbook each monsoon; every claim we get paid builds the trust that "
-         "brings the next shop in — a reinforcing loop. It gets smarter and bigger from use. "
-         "Designed for the worst day, not the average: feed dies, a watchdog tells every shop to "
-         "treat heavy rain as a warning; network dies, the earliest tier already fired hours "
-         "before the water, and there's a laminated plan on the wall. That's the brief's "
-         "power-phones-roads point answered with three channels — Telegram, SMS, and paper. No "
-         "single point of failure decides whether Kak Ros acts.")
+notes(s, "Now the systems core. Today's response pays out after the flood — relief and loans. In "
+         "systems terms that's the 'Shifting the Burden' archetype: leaning on the symptomatic "
+         "quick fix lets real resilience wither, so the problem keeps returning. And it drives a "
+         "vicious reinforcing loop — a flood causes loss, loss forces debt, debt thins the buffer, "
+         "so the next flood hits harder, until the shop closes or the family is displaced and the "
+         "neighbourhood loses its shop. That loop falls first on those least able to absorb it — "
+         "the uninsured, the informal, women-run micro-businesses like Kak Ros. This is where "
+         "fairness meets systems. Our move is to shift the intervention upstream and reverse the "
+         "loop: an early warning drives action, action means less loss, less loss plus "
+         "telemetry-backed evidence means a faster payout, that builds trust, trust brings more "
+         "shops, more shops means better data and better playbooks. Same loop, run the other way. "
+         "That's the leverage point.")
 
-# ============ SLIDE 10 (close) ============
+# ============ SLIDE 10 (whole-system design: resilience, equity, unintended consequences) ============
+s = slide(); add_bg(s)
+add_headline(s, "Designed for the whole system")
+cols3 = [
+    ("Resilient",
+     "Feed dies → watchdog advisory. Network dies → earliest tier + paper plan. Three channels: Telegram · SMS · Paper.",
+     "power, phones, roads — no single point of failure"),
+    ("Fair by design",
+     "Insurer + council funding subsidises the shops least able to pay. The owner owns their data.",
+     "a warning you need resources to act on is regressive"),
+    ("Consequences we designed against",
+     "Redlining → we sell resilience, not risk-scoring for exclusion. Digital divide → SMS + paper. Alert fatigue → tiered debounce + owner in control.",
+     "a holistic lens anticipates the harm, not just the good"),
+]
+for i, (title, body, foot) in enumerate(cols3):
+    l = 0.6 + i * 4.075
+    box(s, l, 1.8, 3.9, 4.5)
+    add_text(s, l + 0.22, 2.0, 3.46, 0.8, title, 18, ACCENT, bold=True)
+    add_text(s, l + 0.22, 2.95, 3.46, 2.4, body, 15, INK)
+    add_text(s, l + 0.22, 5.5, 3.46, 0.7, foot, 12, SECONDARY, italic=True)
+add_footer(s)
+notes(s, "And because a flood is a whole system, we designed for the whole system — not just the "
+         "shop. Resilient: if the data feed dies a watchdog tells every shop to treat heavy rain "
+         "as a warning; if the network dies the earliest tier already fired and there's a paper "
+         "plan on the wall — three channels, Telegram, SMS and paper, because the fix needs power, "
+         "phones and roads too. Fair by design: the insurer-and-council funding subsidises the "
+         "shops least able to pay, and the owner owns their data — because a warning you need "
+         "resources to act on is regressive. And we named the unintended consequences and designed "
+         "against them: insurers could use risk data to redline and drop the most exposed — so we "
+         "sell resilience and verified claims, not risk-scoring for exclusion, and we keep the "
+         "data owner-owned; a digital divide — so SMS and paper; alert fatigue and dependency — so "
+         "tiered alerts with a debounce and the owner always in control. A systems approach means "
+         "anticipating the harm, not just the good.")
+
+# ============ SLIDE 11 (close) ============
 s = slide(); add_bg(s, BG_SOFT)
 add_headline(s, "Same monsoon. Same last-metre gap. Same fix.")
 pins = ["Shah Alam", "Johor", "Jakarta", "Medan / Bukit Lawang"]
