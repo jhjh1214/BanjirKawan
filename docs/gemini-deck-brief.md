@@ -1,9 +1,10 @@
 # Brief for Gemini — Build the BanjirKawan pitch deck (.pptx)
 
-You are an expert presentation designer. **Produce a single, complete, runnable
-Python script using `python-pptx`** that generates `BanjirKawan.pptx` — an
-11-slide, 16:9 pitch deck. Then (if you can execute code) run it and return the
-file.
+You are an expert presentation designer. **Build a finished PowerPoint file —
+`BanjirKawan.pptx`, 11 slides, 16:9 — and return it to me as a downloadable file.**
+Do not show me any code, and do not explain your process. Just produce the deck
+itself, ready to open in PowerPoint / Google Slides, with all text editable (real
+text boxes and shapes, not images of slides).
 
 **Two rules that override everything else:**
 1. **ACCURACY IS ABSOLUTE.** Every word, number, and label in the "CONTENT" of each
@@ -204,8 +205,13 @@ change any figure. Do not add slides, remove slides, or reorder them: exactly 11
 in the order above.
 
 ## OUTPUT
-- Output one complete `python-pptx` script that builds all 11 slides with the content,
-  layout intent, and speaker notes above, then `prs.save("BanjirKawan.pptx")`.
-- If you can execute it, run it and return `BanjirKawan.pptx`.
-- After building, self-check against the Accuracy Lock and confirm: 11 slides, 16:9,
-  every slide (except title) has a footer, every slide has its speaker notes.
+- **Return the finished `BanjirKawan.pptx` file, ready to download and open** — 11
+  slides, 16:9, editable text/shapes (not slide images). No code, no commentary.
+- Include all 11 slides in the exact order above, with the speaker notes placed in
+  each slide's notes field.
+- Before returning it, silently self-check against the Accuracy Lock and confirm:
+  11 slides, 16:9, every slide (except the title) has a footer, every slide has its
+  speaker notes, and every locked number/label appears exactly as written.
+- If a tool limit prevents you from attaching a `.pptx`, produce it in the most
+  directly usable finished form you can (e.g. a downloadable file) — but never
+  substitute a description or code listing for the actual deck.
