@@ -88,11 +88,16 @@ is front-and-centre for Quality of Solution + Metrics.**
 > "BanjirKawan. The design principle answers the brief's own systems angle — *'the
 > fix needs power, phones and roads too'* — so **the AI is never in the storm
 > path.** On a **dry day**, AI vision turns five phone photos into a risk map of
-> every asset — its height off the floor, its ringgit value — and the owner
-> confirms it, so nothing is hallucinated. We pre-compute tiered action playbooks
-> and **cache** them. When the flood comes, the alert path is **dumb, deterministic
-> code** — threshold, cache lookup, send. After the flood, five photos become an
-> itemised **claim report** whose evidence is the river authority's own telemetry.
+> every asset, and — this matters — **the owner confirms and corrects every one.
+> It's participatory: built *with* the community, not imposed on it** — the
+> Climate-U co-creation value. We cache tiered playbooks. When the flood comes, the
+> alert path is **dumb, deterministic code** — threshold, cache lookup, send.
+>
+> And notice the shape of the whole thing — it's the **four resilience capacities**:
+> we help shops **Anticipate** with early warning, **Absorb** with a ranked
+> playbook, **Adapt** through a learning loop that sharpens each monsoon, and
+> **Recover** with a telemetry-backed claim report that lets them *bounce forward,
+> not just back.*
 >
 > And this isn't a concept — *(Slide 6, cue the recording)* **we've built and
 > deployed it.** It's monitoring **301 real river stations**, it's already caught

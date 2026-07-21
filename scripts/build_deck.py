@@ -261,26 +261,40 @@ notes(s, "And a flood isn't water, it's money. The chain: weather event, what's 
 # ============ SLIDE 5 ============
 s = slide(); add_bg(s)
 add_headline(s, "AI is never in the storm path")
-box(s, 0.6, 1.9, 5.7, 3.2, fill=LIGHT_BLUE, border=None)
-add_text(s, 0.9, 2.15, 5.1, 0.5, "DRY DAY — AI thinks", 20, ACCENT, bold=True)
-add_text(s, 0.9, 2.8, 5.1, 2.0, "5 photos → asset risk map → owner confirms → cached tiered playbooks",
-         18, INK)
-box(s, 7.03, 1.9, 5.7, 3.2, fill=LIGHT_GREY, border=None)
-add_text(s, 7.33, 2.15, 5.1, 0.5, "STORM DAY — dumb & deterministic", 20, INK, bold=True)
-add_text(s, 7.33, 2.8, 5.1, 1.0, "threshold → cache lookup → send", 18, INK)
-box_text(s, 3.4, 3.25, 6.5, 0.7, "AI is never in the storm path", 18, WHITE, bold=True, fill=ACCENT, border=None)
-box_text(s, 0.6, 5.4, 12.13, 1.0,
-         "After the flood: 5 photos → claim report (evidence = river authority telemetry)",
-         18, INK, fill=BG_SOFT, align=PP_ALIGN.LEFT)
+box(s, 0.6, 1.6, 5.7, 2.4, fill=LIGHT_BLUE, border=None)
+add_text(s, 0.9, 1.8, 5.1, 0.5, "DRY DAY — AI thinks", 20, ACCENT, bold=True)
+add_text(s, 0.9, 2.45, 5.1, 1.4, "5 photos → asset risk map → owner confirms → cached tiered playbooks",
+         17, INK)
+box(s, 7.03, 1.6, 5.7, 2.4, fill=LIGHT_GREY, border=None)
+add_text(s, 7.33, 1.8, 5.1, 0.5, "STORM DAY — dumb & deterministic", 20, INK, bold=True)
+add_text(s, 7.33, 2.45, 5.1, 1.0, "threshold → cache lookup → send", 17, INK)
+box_text(s, 3.4, 2.9, 6.5, 0.62, "AI is never in the storm path", 17, WHITE, bold=True, fill=ACCENT, border=None)
+# four resilience capacities (the shape of the whole product)
+caps = [("Anticipate", "dry-day survey + early warning"),
+        ("Absorb", "ranked action playbook"),
+        ("Adapt", "learning loop each monsoon"),
+        ("Recover", "claim report → bounce forward")]
+for i, (t1, t2) in enumerate(caps):
+    l = 0.6 + i * 3.045
+    box(s, l, 4.3, 2.9, 1.15)
+    add_text(s, l + 0.15, 4.45, 2.6, 0.45, t1, 16, ACCENT, bold=True, align=PP_ALIGN.CENTER)
+    add_text(s, l + 0.15, 4.93, 2.6, 0.45, t2, 12, SECONDARY, align=PP_ALIGN.CENTER)
+    if i < 3:
+        add_text(s, l + 2.82, 4.55, 0.35, 0.5, "→", 18, ACCENT, bold=True)
+add_text(s, 0.6, 5.65, 12.13, 0.6,
+         "Built WITH the community: AI proposes, the owner confirms every asset — participatory by design (Climate-U co-creation).",
+         14, INK, italic=True, align=PP_ALIGN.CENTER)
 add_footer(s)
-notes(s, "BanjirKawan. The design principle answers the brief's own systems angle — 'the fix "
-         "needs power, phones and roads too' — so the AI is never in the storm path. On a dry "
-         "day, AI vision turns five phone photos into a risk map of every asset — its height off "
-         "the floor, its ringgit value — and the owner confirms it, so nothing is hallucinated. "
-         "We pre-compute tiered action playbooks and cache them. When the flood comes, the alert "
-         "path is dumb, deterministic code — threshold, cache lookup, send. And after the flood, "
-         "five photos become an itemised claim report whose evidence is the river authority's own "
-         "telemetry.")
+notes(s, "BanjirKawan. The design principle answers the brief's systems angle — the fix needs "
+         "power, phones and roads too — so the AI is never in the storm path. On a dry day, AI "
+         "vision turns five photos into a risk map of every asset, and — this matters — the owner "
+         "confirms and corrects every one. It's participatory: built with the community, not "
+         "imposed on it, which is the Climate-U co-creation value. We cache tiered playbooks. When "
+         "the flood comes, the alert path is dumb, deterministic code — threshold, cache lookup, "
+         "send. And notice the shape of the whole thing — it's the four resilience capacities: we "
+         "help shops Anticipate with early warning, Absorb with a ranked playbook, Adapt through a "
+         "learning loop that sharpens each monsoon, and Recover with a telemetry-backed claim "
+         "report that lets them bounce forward, not just back.")
 
 # ============ SLIDE 6 ============
 s = slide(); add_bg(s)
